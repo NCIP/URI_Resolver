@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -15,10 +13,6 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-
-import com.mysql.jdbc.Connection;
-
-import edu.mayo.cts2.uriresolver.controller.ResolveURI;
 
 
 
@@ -46,17 +40,23 @@ public class UriJDBCTemplate implements UriDAO {
 		}
 		return code;
 	}
-
-	@Override
-	public String getIdentifierByID(String type, String id) throws SQLException{
-		String resourceName = "";
+	
+	private String createSelectFields(String versionOf, String identifier){
 		String sql = "";
 		sql += "SELECT ";
 		sql += "um.resourcetype ResourceType, ";
 		sql += "um.resourcename ResourceName, ";
 		sql += "um.resourceuri ResourceURI, ";
 		sql += "um.baseentityuri BaseEntityURI, ";
-		sql += "im.identifier ";
+		sql += versionOf + " VersionOf, ";
+		sql += identifier + " Identifier ";
+		return sql;
+	}
+
+	@Override
+	public String getIdentifierByID(String type, String id){
+		String resourceName = "";
+		String sql = createSelectFields("null", "im.identifier");
 	   
 		sql += "FROM urimap um ";
 											   
@@ -86,7 +86,7 @@ public class UriJDBCTemplate implements UriDAO {
 	}
 	
 	@Override
-	public String getVersionIdentifierByVersionID(String type, String resourceName, String versionID) throws SQLException{
+	public String getVersionIdentifierByVersionID(String type, String resourceName, String versionID){
 		String versionName = "";
 		String sql = "";
 		sql += "SELECT ";
@@ -113,15 +113,8 @@ public class UriJDBCTemplate implements UriDAO {
 
 	
 	@Override
-	public UriResults getURIMapByIdentifier(String type, String identifier) throws SQLException{
-		String sql = "";
-		sql += "SELECT ";
-		sql += "um.resourcetype ResourceType, ";
-		sql += "um.resourcename ResourceName, ";
-		sql += "um.resourceuri ResourceURI, ";
-		sql += "um.baseentityuri BaseEntityURI, ";
-		sql += "null as versionOf, ";
-		sql += "null as identifier ";
+	public UriResults getURIMapByIdentifier(String type, String identifier){
+		String sql = createSelectFields("null", "null");
 
 		sql += "FROM urimap um ";
 
@@ -142,16 +135,8 @@ public class UriJDBCTemplate implements UriDAO {
 
 
 	@Override
-	public UriResults getURIMapIdentifiers(String type, String identifier) throws SQLException{
-		String sql = "";
-		sql += "SELECT ";
-		
-		sql += "um.resourcetype ResourceType, ";
-		sql += "um.resourcename ResourceName, ";
-		sql += "um.resourceuri ResourceURI, ";
-		sql += "um.baseentityuri BaseEntityURI, ";
-		sql += "null as versionOf,";
-		sql += "im.identifier Identifier ";
+	public UriResults getURIMapIdentifiers(String type, String identifier){
+		String sql = createSelectFields("null", "im.identifier");
     
 		sql += "FROM "; 
 		sql += "urimap um "; 
@@ -181,15 +166,8 @@ public class UriJDBCTemplate implements UriDAO {
 	}
 
 	@Override
-	public UriResults getURIMapByVersionIdentifier(String type, String identifier, String versionID) throws SQLException{
-		String sql = "";
-		sql += "SELECT ";
-		sql += "um.resourcetype ResourceType, ";
-		sql += "um.resourcename ResourceName, ";
-		sql += "um.resourceuri ResourceURI, ";
-		sql += "um.baseentityuri BaseEntityURI, ";
-		sql += "null as versionOf, ";
-		sql += "null as identifier ";
+	public UriResults getURIMapByVersionIdentifier(String type, String identifier, String versionID){
+		String sql = createSelectFields("null", "null");
 
 		sql += "FROM urimap um ";
 
@@ -226,16 +204,8 @@ public class UriJDBCTemplate implements UriDAO {
 	
 	
 	@Override
-	public UriResults getURIMapVersionIdentifiers(String type, String identifier) throws SQLException{
-		String sql = "";
-		
-		sql += "SELECT ";
-		sql += "um.resourcetype ResourceType, ";
-		sql += "um.resourcename ResourceName, ";
-		sql += "um.resourceuri ResourceURI, ";
-		sql += "um.baseentityuri BaseEntityURI, ";
-		sql += "vm.resourcename as VersionOf, ";
-		sql += "vm.versionid as Identifier ";
+	public UriResults getURIMapVersionIdentifiers(String type, String identifier){
+		String sql = createSelectFields("vm.resourcename", "vm.versionid");
 		
 		sql += "FROM "; 
 		sql += "urimap um "; 
@@ -285,7 +255,6 @@ public class UriJDBCTemplate implements UriDAO {
  					trimmedLine = trimmedLine.replaceAll(" COLLATE utf8_unicode_ci", "");
  					trimmedLine = trimmedLine.replaceAll(" ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", "");
  					trimmedLine = trimmedLine.replaceAll("", "");
- 					//trimmedLine = trimmedLine.toUpperCase();
  					sql += trimmedLine + "\n";
  				}
             }

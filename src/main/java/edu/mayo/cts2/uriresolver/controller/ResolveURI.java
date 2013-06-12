@@ -25,12 +25,15 @@ public class ResolveURI {
 	ApplicationContext context;
 	UriJDBCTemplate uriJDBCTemplate;
 	static Logger logger = Logger.getLogger(ResolveURI.class);
-
+	private final static String TYPE="type";
+	private final static String IDENTIFIER="identifier";
+		
 	// -- ID
 	@RequestMapping("/id/{type}")
-	public @ResponseBody UriResults uriMapById(@PathVariable("type") String type, @RequestParam(value = "id") String id) throws Exception {
+	public @ResponseBody UriResults uriMapById(@PathVariable(TYPE) String type, @RequestParam(value = "id") String id){
 		if(this.connectDB()){
-			String identifier = uriJDBCTemplate.getIdentifierByID(type, id);			
+			String identifier;
+			identifier = uriJDBCTemplate.getIdentifierByID(type, id);
 			return uriMapByIdentifier(type, identifier);
 		} 
 		
@@ -38,7 +41,7 @@ public class ResolveURI {
 	}
 
 	@RequestMapping(value={"/id/{type}/{identifier}"})
-	public @ResponseBody UriResults uriMapByIdentifier(@PathVariable("type") String type, @PathVariable("identifier") String identifier) throws Exception {
+	public @ResponseBody UriResults uriMapByIdentifier(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(this.connectDB()){
 			UriResults uriResults = uriJDBCTemplate.getURIMapByIdentifier(type, identifier);			
 			return uriResults;
@@ -49,7 +52,7 @@ public class ResolveURI {
 
 	// -- IDS
 	@RequestMapping("/ids/{type}/{identifier}")
-	public @ResponseBody UriResults allUriMapIdentities(@PathVariable("type") String type, @PathVariable("identifier") String identifier) throws Exception {
+	public @ResponseBody UriResults allUriMapIdentities(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(this.connectDB()){
 			UriResults uriResults = uriJDBCTemplate.getURIMapIdentifiers(type, identifier);	
 			return uriResults;
@@ -60,8 +63,8 @@ public class ResolveURI {
 
 	// --- VERSION
 	@RequestMapping("/version/{type}/{identifier}")
-	public @ResponseBody UriResults uriMapByVersionID(@PathVariable("type") String type, 
-			@PathVariable("identifier") String identifier, @RequestParam(value = "versionID") String versionID) throws Exception {
+	public @ResponseBody UriResults uriMapByVersionID(@PathVariable(TYPE) String type, 
+			@PathVariable(IDENTIFIER) String identifier, @RequestParam(value = "versionID") String versionID){
 		if(this.connectDB()){
 			String versionIdentifier = uriJDBCTemplate.getVersionIdentifierByVersionID(type, identifier, versionID);			
 	//		return uriMapByVersionIdentifier(type, identifier, versionIdentifier);
@@ -72,8 +75,8 @@ public class ResolveURI {
 	}
 
 	@RequestMapping("/version/{type}/{identifier}/{versionIdentifier}")
-	public @ResponseBody UriResults uriMapByVersionIdentifier(@PathVariable("type") String type, 
-			@PathVariable("identifier") String identifier, @PathVariable("versionIdentifier") String versionIdentifier) throws Exception {
+	public @ResponseBody UriResults uriMapByVersionIdentifier(@PathVariable(TYPE) String type, 
+			@PathVariable(IDENTIFIER) String identifier, @PathVariable("versionIdentifier") String versionIdentifier){
 		if(this.connectDB()){
 			UriResults uriResults = uriJDBCTemplate.getURIMapByVersionIdentifier(type, identifier, versionIdentifier);
 			return uriResults;
@@ -84,7 +87,7 @@ public class ResolveURI {
 
 	// -- VERSIONS
 	@RequestMapping("/versions/{type}/{identifier}")
-	public @ResponseBody UriResults allUriMapVersionIdentifiers(@PathVariable("type") String type, @PathVariable("identifier") String identifier) throws Exception {
+	public @ResponseBody UriResults allUriMapVersionIdentifiers(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(this.connectDB()){
 			UriResults uriResults = uriJDBCTemplate.getURIMapVersionIdentifiers(type, identifier);		
 			return uriResults;
