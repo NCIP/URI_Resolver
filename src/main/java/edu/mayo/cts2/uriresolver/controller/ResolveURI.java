@@ -39,7 +39,8 @@ public class ResolveURI {
 		
 	// -- ID
 	@RequestMapping("/id/{type}")
-	public @ResponseBody UriResults uriMapById(@PathVariable(TYPE) String type, @RequestParam(value = "id") String id){
+	@ResponseBody 
+	public UriResults uriMapById(@PathVariable(TYPE) String type, @RequestParam(value = "id") String id){
 		if(this.connectDB()){
 			String identifier;
 			identifier = uriJDBCTemplate.getIdentifierByID(type, id);
@@ -50,7 +51,8 @@ public class ResolveURI {
 	}
 
 	@RequestMapping(value={"/id/{type}/{identifier}"})
-	public @ResponseBody UriResults uriMapByIdentifier(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
+	@ResponseBody
+	public UriResults uriMapByIdentifier(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(this.connectDB()){
 			return uriJDBCTemplate.getURIMapByIdentifier(type, identifier);	
 		} 
@@ -60,7 +62,8 @@ public class ResolveURI {
 
 	// -- IDS
 	@RequestMapping("/ids/{type}/{identifier}")
-	public @ResponseBody UriResults allUriMapIdentities(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
+	@ResponseBody
+	public UriResults allUriMapIdentities(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(this.connectDB()){
 			return uriJDBCTemplate.getURIMapIdentifiers(type, identifier);	
 		} 
@@ -70,7 +73,8 @@ public class ResolveURI {
 
 	// --- VERSION
 	@RequestMapping("/version/{type}/{identifier}")
-	public @ResponseBody UriResults uriMapByVersionID(@PathVariable(TYPE) String type, 
+	@ResponseBody
+	public UriResults uriMapByVersionID(@PathVariable(TYPE) String type, 
 			@PathVariable(IDENTIFIER) String identifier, @RequestParam(value = "versionID") String versionID){
 		if(this.connectDB()){
 			String versionIdentifier = uriJDBCTemplate.getVersionIdentifierByVersionID(type, identifier, versionID);			
@@ -81,7 +85,8 @@ public class ResolveURI {
 	}
 
 	@RequestMapping("/version/{type}/{identifier}/{versionIdentifier}")
-	public @ResponseBody UriResults uriMapByVersionIdentifier(@PathVariable(TYPE) String type, 
+	@ResponseBody
+	public UriResults uriMapByVersionIdentifier(@PathVariable(TYPE) String type, 
 			@PathVariable(IDENTIFIER) String identifier, @PathVariable("versionIdentifier") String versionIdentifier){
 		if(this.connectDB()){
 			return uriJDBCTemplate.getURIMapByVersionIdentifier(type, identifier, versionIdentifier);
@@ -92,7 +97,8 @@ public class ResolveURI {
 
 	// -- VERSIONS
 	@RequestMapping("/versions/{type}/{identifier}")
-	public @ResponseBody UriResults allUriMapVersionIdentifiers(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
+	@ResponseBody
+	public UriResults allUriMapVersionIdentifiers(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(this.connectDB()){
 			return uriJDBCTemplate.getURIMapVersionIdentifiers(type, identifier);		
 		} 
