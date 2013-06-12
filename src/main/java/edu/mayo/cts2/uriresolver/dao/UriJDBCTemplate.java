@@ -32,14 +32,23 @@ public class UriJDBCTemplate implements UriDAO {
 
 	@Override
 	public int checkDataSource(DataSource ds) {
+		Connection con = null;
 		int code = 0;
 		try {
-			Connection con = ds.getConnection();
+			con = ds.getConnection();
 			con.close();
 		} catch (SQLException e) {
 			String msg = e.getMessage();
 			logger.error("Error connecting to data source: " + msg + "\n");
 			return code;
+		} finally {
+			if(con != null){
+				try {
+					con.close();
+				} catch (SQLException e) {
+					logger.error("Error while closing connection to data source: " + e.getMessage());
+				}
+			}
 		}
 		return code;
 	}

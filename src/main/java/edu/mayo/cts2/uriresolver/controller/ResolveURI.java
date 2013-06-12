@@ -117,7 +117,7 @@ public class ResolveURI {
 			inMemoryDBrequired = true;
 			this.logConnectionError(connectionCode);
 		}
-		else if(this.checkTablesExist(ds) == false){
+		else if(!this.checkTablesExist(ds)){
 			inMemoryDBrequired = true;
 		}
 		
@@ -199,15 +199,16 @@ public class ResolveURI {
 				return true;
 			}
 		} catch (SQLException e) {
+			return false;
+		} finally {
 			if(tables != null){
 				try {
 					tables.close();
 				} catch (SQLException e1) {
-					logger.error("Error while colsing result set: " + e.getMessage());
+					logger.error("Error while colsing result set: " + e1.getMessage());
 				}
 			}
-			return false;
-		} 
+		}
 		
 		return false;
 	}
