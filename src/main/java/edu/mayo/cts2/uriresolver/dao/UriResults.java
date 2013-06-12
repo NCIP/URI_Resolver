@@ -11,7 +11,7 @@ public class UriResults {
 	private String resourceURI;
 	private String baseEntityURI;
 	private String versionOf;
-	public List<String> identifiers;
+	private List<String> identifiers;
 	public String getResourceType() {
 		return resourceType;
 	}

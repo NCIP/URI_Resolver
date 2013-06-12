@@ -22,8 +22,8 @@ import org.apache.log4j.Logger;
 
 @Controller
 public class ResolveURI {
-	ApplicationContext context;
-	UriJDBCTemplate uriJDBCTemplate;
+	private ApplicationContext context;
+	private UriJDBCTemplate uriJDBCTemplate;
 	private static Logger logger = Logger.getLogger(ResolveURI.class);
 	private static final String TYPE="type";
 	private static final String IDENTIFIER="identifier";
@@ -46,8 +46,7 @@ public class ResolveURI {
 	@RequestMapping(value={"/id/{type}/{identifier}"})
 	public @ResponseBody UriResults uriMapByIdentifier(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(this.connectDB()){
-			UriResults uriResults = uriJDBCTemplate.getURIMapByIdentifier(type, identifier);			
-			return uriResults;
+			return uriJDBCTemplate.getURIMapByIdentifier(type, identifier);	
 		} 
 		
 		return null;
@@ -57,8 +56,7 @@ public class ResolveURI {
 	@RequestMapping("/ids/{type}/{identifier}")
 	public @ResponseBody UriResults allUriMapIdentities(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(this.connectDB()){
-			UriResults uriResults = uriJDBCTemplate.getURIMapIdentifiers(type, identifier);	
-			return uriResults;
+			return uriJDBCTemplate.getURIMapIdentifiers(type, identifier);	
 		} 
 		
 		return null;
@@ -70,7 +68,6 @@ public class ResolveURI {
 			@PathVariable(IDENTIFIER) String identifier, @RequestParam(value = "versionID") String versionID){
 		if(this.connectDB()){
 			String versionIdentifier = uriJDBCTemplate.getVersionIdentifierByVersionID(type, identifier, versionID);			
-	//		return uriMapByVersionIdentifier(type, identifier, versionIdentifier);
 			return uriMapByIdentifier("CODE_SYSTEM_VERSION", versionIdentifier);
 		} 
 		
@@ -81,8 +78,7 @@ public class ResolveURI {
 	public @ResponseBody UriResults uriMapByVersionIdentifier(@PathVariable(TYPE) String type, 
 			@PathVariable(IDENTIFIER) String identifier, @PathVariable("versionIdentifier") String versionIdentifier){
 		if(this.connectDB()){
-			UriResults uriResults = uriJDBCTemplate.getURIMapByVersionIdentifier(type, identifier, versionIdentifier);
-			return uriResults;
+			return uriJDBCTemplate.getURIMapByVersionIdentifier(type, identifier, versionIdentifier);
 		} 
 		
 		return null;
@@ -92,8 +88,7 @@ public class ResolveURI {
 	@RequestMapping("/versions/{type}/{identifier}")
 	public @ResponseBody UriResults allUriMapVersionIdentifiers(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(this.connectDB()){
-			UriResults uriResults = uriJDBCTemplate.getURIMapVersionIdentifiers(type, identifier);		
-			return uriResults;
+			return uriJDBCTemplate.getURIMapVersionIdentifiers(type, identifier);		
 		} 
 		
 		return null;
@@ -101,7 +96,7 @@ public class ResolveURI {
    
 	private boolean connectDB() {
 		DataSource ds;
-		Connection con;
+		Connection con = null;
 		boolean inMemoryDBrequired = false;
 		boolean importData = false;
 		context = new ClassPathXmlApplicationContext("Beans.xml");
@@ -132,9 +127,18 @@ public class ResolveURI {
 						logger.error("Database is missing table: " + TABLENAMES[i]);
 					}
 				}	
+				con.close();
 			} catch (SQLException e) {
 				inMemoryDBrequired = true;
-				logger.error("Unknown error while checking tables exist");
+				logger.error("Unknown error while checking tables exist: " + e.getMessage());
+			} finally {
+				try {
+					if(con != null){
+						con.close();
+					}
+				} catch (SQLException e) {
+					logger.error("Error while closing data source connection object: " + e.getMessage());
+				}
 			}
 		}
 		
@@ -150,7 +154,7 @@ public class ResolveURI {
 			
 			if(connectionCode != 0){
 				logger.error("Unable to create in memory database.  Cannot continue.");
-				System.exit(1);
+				throw new RuntimeException();
 			}
 		}
 
@@ -165,13 +169,21 @@ public class ResolveURI {
 
 	private boolean tableExists(DatabaseMetaData metaData, String tablename) {
 		//ResultSet tables = metaData.getTables(null, "public", "%" ,new String[] {"TABLE"} );
-		ResultSet tables;
+		ResultSet tables = null;
 		try {
 			tables = metaData.getTables(null, null, tablename, null);
 			if(tables.next()){
+				tables.close();
 				return true;
 			}
 		} catch (SQLException e) {
+			if(tables != null){
+				try {
+					tables.close();
+				} catch (SQLException e1) {
+					logger.error("Error while colsing result set: " + e.getMessage());
+				}
+			}
 			return false;
 		} 
 		
