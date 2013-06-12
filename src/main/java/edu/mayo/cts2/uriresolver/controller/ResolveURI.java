@@ -10,7 +10,6 @@ import javax.sql.DataSource;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,11 +18,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import edu.mayo.cts2.uriresolver.dao.UriJDBCTemplate;
 import edu.mayo.cts2.uriresolver.dao.UriResults;
+import org.apache.log4j.Logger;
 
 @Controller
 public class ResolveURI {
 	ApplicationContext context;
 	UriJDBCTemplate uriJDBCTemplate;
+	static Logger logger = Logger.getLogger(ResolveURI.class);
 
 	// -- ID
 	@RequestMapping("/id/{type}")
@@ -106,13 +107,13 @@ public class ResolveURI {
 		if(connectionCode != 0){
 			inMemoryDBrequired = true;
 			if(connectionCode == 1045){ // Access Denied
-				System.out.println("Access denied to DB server");
+				logger.error("Access denied to DB server");
 			}
 			else if(connectionCode == 1049){ // Database missing
-				System.out.println("Database does not exist");
+				logger.error("Database does not exist");
 			}
 			else{
-				System.out.println("Unknown error while connecting to database");
+				logger.error("Unknown error while connecting to database");
 			}
 		}
 		else{
@@ -123,12 +124,12 @@ public class ResolveURI {
 				for(int i=0; i < tablenames.length; i++){
 					if(!this.tableExists(metaData, tablenames[i])){
 						inMemoryDBrequired = true;
-						System.out.println("Database is missing table: " + tablenames[i]);
+						logger.error("Database is missing table: " + tablenames[i]);
 					}
 				}	
 			} catch (SQLException e) {
 				inMemoryDBrequired = true;
-				System.out.println("Unknown error while checking tables exist");
+				logger.error("Unknown error while checking tables exist");
 			}
 		}
 		
@@ -136,15 +137,14 @@ public class ResolveURI {
 		
 		if(inMemoryDBrequired){
 			// createDatabase in memory
-			System.out.println("Creating an in memory database");
+			logger.info("Creating an in memory database");
 			ds = (DataSource) context.getBean("h2DataSource");
 			connectionCode = uriJDBCTemplate.checkDataSource(ds);
-			System.out.println("HERE: code: " + connectionCode);
 			
 			importData = true;
 			
 			if(connectionCode != 0){
-				System.out.println("Unable to create in memory database.  Cannot continue.");
+				logger.error("Unable to create in memory database.  Cannot continue.");
 				System.exit(1);
 			}
 		}
@@ -154,28 +154,11 @@ public class ResolveURI {
 		uriJDBCTemplate.setDataSource(ds);
 		if(importData){
 			uriJDBCTemplate.importData();
-//			try {
-//				con = ds.getConnection();
-//				DatabaseMetaData metaData = con.getMetaData();
-//				ResultSet tables = metaData.getTables(null, null, "%" , null);
-//				while(tables.next()){
-//					System.out.println("Table: " + tables.getString(1) + ", " + tables.getString(2) + ", " + tables.getString(3));
-//				}
-//				SqlRowSet catalogs = this.uriJDBCTemplate.query("SELECT * FROM identifiermap");
-//				while(catalogs.next()){
-//					System.out.println(catalogs.toString());
-//				}
-//				
-//			} catch (SQLException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
 		}
 		return true;
 	}
 
 	private boolean tableExists(DatabaseMetaData metaData, String tablename) {
-		// check if tables exists
 		//ResultSet tables = metaData.getTables(null, "public", "%" ,new String[] {"TABLE"} );
 		ResultSet tables;
 		try {

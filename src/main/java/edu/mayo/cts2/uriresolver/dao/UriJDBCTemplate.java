@@ -12,16 +12,20 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.mysql.jdbc.Connection;
+
+import edu.mayo.cts2.uriresolver.controller.ResolveURI;
 
 
 
 public class UriJDBCTemplate implements UriDAO {
 	private DataSource dataSource;
 	private JdbcTemplate jdbcTemplateObject;
+	static Logger logger = Logger.getLogger(UriJDBCTemplate.class);
 	
 	@Override
 	public void setDataSource(DataSource ds) {
@@ -36,10 +40,8 @@ public class UriJDBCTemplate implements UriDAO {
 		try {
 			ds.getConnection();
 		} catch (SQLException e) {
-			code = e.getErrorCode();
 			String msg = e.getMessage();
-			System.out.println("Code: " + code);
-			System.out.println("Msg: " + msg);
+			logger.error("Error connecting to data source: " + msg + "\n");
 			return code;
 		}
 		return code;
@@ -74,7 +76,6 @@ public class UriJDBCTemplate implements UriDAO {
 		sql += "     im.identifier = '" + id + "'";
 		sql += "   )";
 	   
-		System.out.println(sql);
 		SqlRowSet data = this.jdbcTemplateObject.queryForRowSet(sql);		
 		
 		if(data.next()){
@@ -100,7 +101,6 @@ public class UriJDBCTemplate implements UriDAO {
 		sql += "   AND ";
 		sql += "   VersionID = '" + versionID + "'";
 	   
-		System.out.println(sql);
 		SqlRowSet data = this.jdbcTemplateObject.queryForRowSet(sql);		
 		
 		if(data.next()){
@@ -129,7 +129,6 @@ public class UriJDBCTemplate implements UriDAO {
 		sql += "um.resourcetype =  '" + type + "' ";
 		sql += "AND ";
 		sql += "um.resourcename = '" + identifier + "' ";
-		System.out.println(sql);
 
 		List<UriResults> data = this.jdbcTemplateObject.query(sql, new UriResultsMapper());
 	   
@@ -171,7 +170,6 @@ public class UriJDBCTemplate implements UriDAO {
 		sql += "um.resourcetype =  '" + type + "' ";
 		sql += "AND ";
 		sql += "um.resourcename = '" + identifier + "' ";
-		System.out.println(sql);
 		
 		List<UriResults> data = this.jdbcTemplateObject.query(sql, new UriResultsMapper());
 	   
@@ -216,7 +214,6 @@ public class UriJDBCTemplate implements UriDAO {
 		sql += "vm.versionid = '" + versionID + "' ";
 		sql += "OR ";
 		sql += "vm.resourcename = '" + versionID + "') ";
-		System.out.println(sql);
 		
 		List<UriResults> data = this.jdbcTemplateObject.query(sql, new UriResultsMapper());
 
@@ -257,7 +254,6 @@ public class UriJDBCTemplate implements UriDAO {
 		sql += "um.resourcetype =  '" + type + "' ";
 		sql += "AND ";
 		sql += "um.resourcename = '" + identifier + "' ";
-		System.out.println(sql);
 			
 		List<UriResults> data = this.jdbcTemplateObject.query(sql, new UriResultsMapper());
 	   
@@ -269,7 +265,7 @@ public class UriJDBCTemplate implements UriDAO {
 	}
 
 
-	public void importData() {
+	public boolean importData() {
 		String sql = "";
 		BufferedReader bufferedReader =  null;
 		Reader reader = null;
@@ -296,7 +292,8 @@ public class UriJDBCTemplate implements UriDAO {
             bufferedReader.close();
             reader.close(); 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error while importing data to in memory database: " + e.getMessage());
+			return false;
 		} finally {
 			try {
 				if(bufferedReader != null){
@@ -306,37 +303,12 @@ public class UriJDBCTemplate implements UriDAO {
 					reader.close();
 				}
 			} catch (IOException ex) {
-				ex.printStackTrace();
+				logger.error("Error while closing access to in memory database: " + ex.getMessage());
+				return true;
 			}
 		}
 			
-		System.out.println(sql);
 		this.jdbcTemplateObject.execute(sql);
-		
-//		java.sql.Connection con;
-//		try {
-//			con = this.jdbcTemplateObject.getDataSource().getConnection();
-//			DatabaseMetaData metaData = con.getMetaData();
-//			ResultSet tables = metaData.getTables(null, null, "%" , null);
-//			while(tables.next()){
-//				System.out.println("Table: " + tables.getString(3));
-//			}
-//			
-//			SqlRowSet catalogs = this.jdbcTemplateObject.queryForRowSet("Select * from catalogs");
-//			while(catalogs.next()){
-//				System.out.println(catalogs.toString());
-//			}
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-
-		
+		return true;		
 	}
-
-
-	public SqlRowSet query(String sql) {
-		return this.jdbcTemplateObject.queryForRowSet(sql);
-	}
-
 }
