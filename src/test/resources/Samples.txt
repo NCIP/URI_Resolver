@@ -1,0 +1,50 @@
+curl http://localhost:8080/URI_Resolver/version/CODE_SYSTEM/AIR?versionID=1993 -> (CODE_SYSTEM_VERSION)
+curl http://localhost:8080/URI_Resolver/id/CODE_SYSTEM?id=rdf
+curl http://localhost:8080/URI_Resolver/id/CODE_SYSTEM/rdf
+
+      {
+        "resourceType":"CODE_SYSTEM",
+        "resourceName":"rdf",
+        "resourceURI":"http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "baseEntityURI":"http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+      }
+
+
+curl http://localhost:8080/URI_Resolver/ids/CODE_SYSTEM/AIR
+
+    {
+      "resourceType":"CODE_SYSTEM",
+      "resourceName":"AIR",
+      "identifiers":[
+        "AI/RHEUM",
+        "AIR",
+        "http://id.nlm.nih.gov/cui/C1140091"
+      ],
+      "baseEntityURI":"http://id.nlm.nih.gov/cui/C1140091/"
+    }
+
+curl http://localhost:8080/URI_Resolver/version/CODE_SYSTEM/AIR/1993
+
+    {
+      "resourceType":"CODE_SYSTEM_VERSION",
+      "resourceName":"AIR93",
+      "resourceURI":"http://id.nlm.nih.gov/cui/C1140092"
+    }
+
+curl http://localhost:8080/URI_Resolver/versions/CODE_SYSTEM_VERSION/AIR93
+
+    {
+      "resourceURI":"http://id.nlm.nih.gov/cui/C1140092",
+      "resourceName":"AIR93",
+      "resourceType":"CODE_SYSTEM_VERSION",
+      "versionOf":"AIR",
+      "identifiers":[
+        "1993",
+        "AIR93"
+      ]
+    }
+
+
+
+
+curl http://localhost:8080/URI_Resolver/
