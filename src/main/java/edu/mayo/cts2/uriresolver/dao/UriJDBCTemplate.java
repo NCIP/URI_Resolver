@@ -52,20 +52,35 @@ public class UriJDBCTemplate implements UriDAO {
 		sql += identifier + " Identifier ";
 		return sql;
 	}
+	
+	private String createOnResourceTypeAndResourceNameMatch(String table1, String table2){
+		String sql = "ON  ";
+		sql += "( ";
+		sql += table1 + ".resourcetype = " + table2 + ".resourcetype ";
+		sql += "  AND ";
+		sql += table1 + ".resourcename = " + table2 + ".resourcename ";
+		sql += ") ";
+		return sql;
+	}
+
+	private String createWhereTypeAndNameMatch(String table, String type, String name) {
+		String sql = "WHERE  ";
+		sql += table + ".resourcetype =  '" + type + "' ";
+		sql += "AND ";
+		sql += table + ".resourcename = '" + name + "' ";
+		return sql;
+	}
+
 
 	@Override
 	public String getIdentifierByID(String type, String id){
 		String resourceName = "";
 		String sql = createSelectFields("null", "im.identifier");
 	   
-		sql += "FROM urimap um ";
-											   
-		sql += "LEFT JOIN identifiermap im ON"; 
-		sql += "   (";
-		sql += "     im.resourcetype = um.resourcetype";
-		sql += "     AND";
-		sql += "     im.resourcename = um.resourcename";
-		sql += "   )";
+		sql += "FROM urimap um ";											   
+		sql += "LEFT JOIN identifiermap im ";
+		
+		sql += this.createOnResourceTypeAndResourceNameMatch("im", "um");
 
 		sql += " WHERE"; 
 		sql += "   um.resourcetype = '" + type + "'";
@@ -117,11 +132,7 @@ public class UriJDBCTemplate implements UriDAO {
 		String sql = createSelectFields("null", "null");
 
 		sql += "FROM urimap um ";
-
-		sql += "WHERE  ";
-		sql += "um.resourcetype =  '" + type + "' ";
-		sql += "AND ";
-		sql += "um.resourcename = '" + identifier + "' ";
+		sql += this.createWhereTypeAndNameMatch("um", type, identifier);
 
 		List<UriResults> data = this.jdbcTemplateObject.query(sql, new UriResultsMapper());
 	   
@@ -144,17 +155,8 @@ public class UriJDBCTemplate implements UriDAO {
 		sql += "LEFT JOIN  ";
 		sql += "identifiermap im ";
 		  
-		sql += "ON  ";
-		sql += "( ";
-		sql += "  im.resourcetype = um.resourcetype ";
-		sql += "  AND ";
-		sql += "  im.resourcename = um.resourcename ";
-		sql += ") ";
-   
-		sql += "WHERE  ";
-		sql += "um.resourcetype =  '" + type + "' ";
-		sql += "AND ";
-		sql += "um.resourcename = '" + identifier + "' ";
+		sql += this.createOnResourceTypeAndResourceNameMatch("im", "um");
+		sql += this.createWhereTypeAndNameMatch("um", type, identifier);
 		
 		List<UriResults> data = this.jdbcTemplateObject.query(sql, new UriResultsMapper());
 	   
@@ -175,18 +177,9 @@ public class UriJDBCTemplate implements UriDAO {
 		sql += "INNER JOIN  ";
 		sql += "versionmap vm ";
 		  
-		sql += "ON  ";
-		sql += "( ";
-		sql += "  um.resourcetype = vm.resourcetype ";
-		sql += "  AND ";
-		sql += "  um.resourcename = vm.resourcename ";
-		sql += ") ";
+		sql += this.createOnResourceTypeAndResourceNameMatch("um", "vm");
+		sql += this.createWhereTypeAndNameMatch("vm", type, identifier);
    
-		sql += "WHERE  ";
-		sql += "vm.resourcetype =  '" + type + "' ";
-		sql += "AND ";
-		sql += "vm.resourcename = '" + identifier + "' ";
-
 		sql += "AND ";
 		sql += "(";
 		sql += "vm.versionid = '" + versionID + "' ";
@@ -213,17 +206,8 @@ public class UriJDBCTemplate implements UriDAO {
 		sql += "LEFT JOIN  ";
 		sql += "versionmap vm ";
 		  
-		sql += "ON  ";
-		sql += "( ";
-		sql += "  um.resourcetype = vm.versiontype ";
-		sql += "  AND ";
-		sql += "  um.resourcename = vm.versionname ";
-		sql += ") ";
-   
-		sql += "WHERE  ";
-		sql += "um.resourcetype =  '" + type + "' ";
-		sql += "AND ";
-		sql += "um.resourcename = '" + identifier + "' ";
+		sql += this.createOnResourceTypeAndResourceNameMatch("um", "vm");
+		sql += this.createWhereTypeAndNameMatch("um", type, identifier);
 			
 		List<UriResults> data = this.jdbcTemplateObject.query(sql, new UriResultsMapper());
 	   

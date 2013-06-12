@@ -25,8 +25,11 @@ public class ResolveURI {
 	ApplicationContext context;
 	UriJDBCTemplate uriJDBCTemplate;
 	static Logger logger = Logger.getLogger(ResolveURI.class);
-	private final static String TYPE="type";
-	private final static String IDENTIFIER="identifier";
+	private static final String TYPE="type";
+	private static final String IDENTIFIER="identifier";
+	private static final int ACCESS_DENIED = 1045;
+	private static final int DATABASE_MISSING = 1049;
+	private static final String [] TABLENAMES = {"urimap", "versionmap", "identifiermap"};
 		
 	// -- ID
 	@RequestMapping("/id/{type}")
@@ -99,7 +102,6 @@ public class ResolveURI {
 	private boolean connectDB() {
 		DataSource ds;
 		Connection con;
-		String [] tablenames = {"urimap", "versionmap", "identifiermap"};
 		boolean inMemoryDBrequired = false;
 		boolean importData = false;
 		context = new ClassPathXmlApplicationContext("Beans.xml");
@@ -109,10 +111,10 @@ public class ResolveURI {
 		int connectionCode = uriJDBCTemplate.checkDataSource(ds);
 		if(connectionCode != 0){
 			inMemoryDBrequired = true;
-			if(connectionCode == 1045){ // Access Denied
+			if(connectionCode == ACCESS_DENIED){ 
 				logger.error("Access denied to DB server");
 			}
-			else if(connectionCode == 1049){ // Database missing
+			else if(connectionCode == DATABASE_MISSING){
 				logger.error("Database does not exist");
 			}
 			else{
@@ -124,10 +126,10 @@ public class ResolveURI {
 			try {
 				con = ds.getConnection();
 				DatabaseMetaData metaData = con.getMetaData();
-				for(int i=0; i < tablenames.length; i++){
-					if(!this.tableExists(metaData, tablenames[i])){
+				for(int i=0; i < TABLENAMES.length; i++){
+					if(!this.tableExists(metaData, TABLENAMES[i])){
 						inMemoryDBrequired = true;
-						logger.error("Database is missing table: " + tablenames[i]);
+						logger.error("Database is missing table: " + TABLENAMES[i]);
 					}
 				}	
 			} catch (SQLException e) {
