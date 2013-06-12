@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 
 
 public interface UriDAO {
+	boolean isConnected();
 	void setDataSource(DataSource ds);
 	int checkDataSource(DataSource ds);
 	String getIdentifierByID(String type, String id) throws SQLException;

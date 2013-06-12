@@ -1,10 +1,6 @@
 package edu.mayo.cts2.uriresolver.dao;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -23,6 +19,11 @@ public class UriJDBCTemplate implements UriDAO {
 	private static final String NULL_VALUE = "null";
 	
 	@Override
+	public boolean isConnected(){
+		return dataSource == null;
+	}
+	
+	@Override
 	public void setDataSource(DataSource ds) {
 		this.dataSource = ds;
 		this.jdbcTemplateObject = new JdbcTemplate(dataSource);
@@ -33,7 +34,8 @@ public class UriJDBCTemplate implements UriDAO {
 	public int checkDataSource(DataSource ds) {
 		int code = 0;
 		try {
-			ds.getConnection();
+			Connection con = ds.getConnection();
+			con.close();
 		} catch (SQLException e) {
 			String msg = e.getMessage();
 			logger.error("Error connecting to data source: " + msg + "\n");
@@ -217,64 +219,5 @@ public class UriJDBCTemplate implements UriDAO {
 		}
 		
 		return null;
-	}
-
-
-	public boolean importData() {
-		String sql = "";
-		BufferedReader bufferedReader =  null;
-		Reader reader = null;
-		try{
-			InputStream in =UriJDBCTemplate.class.getResourceAsStream("/uriresolver.sql");
-			reader = new InputStreamReader(in, "UTF-8");
-            bufferedReader = new BufferedReader(reader);
-            while (bufferedReader.ready()) {
-            	String line = bufferedReader.readLine().trim(); 
- 				if (this.isSQLCode(line)) {
- 					sql += this.convertToH2(line);
- 				}
-            }
-            bufferedReader.close();
-            reader.close(); 
-		} catch (IOException e) {
-			logger.error("Error while importing data to in memory database: " + e.getMessage());
-			return false;
-		} finally {
-			try {
-				if(bufferedReader != null){
-					bufferedReader.close();
-				} 
-				if(reader != null){
-					reader.close();
-				}
-			} catch (IOException ex) {
-				logger.error("Error while closing access to in memory database: " + ex.getMessage());
-				return true;
-			}
-		}
-			
-		this.jdbcTemplateObject.execute(sql);
-		return true;		
-	}
-
-
-	private String convertToH2(String mySQLLine) {
-		String [] stringsToRemove = {"`", " COLLATE utf8_bin", " CHARACTER SET utf8", " COLLATE utf8_unicode_ci", " ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin"};
-		String h2Line = mySQLLine.replaceAll("\\\\'", "''");
-		for(int i=0; i < stringsToRemove.length; i++){ 						
-			h2Line = h2Line.replaceAll(stringsToRemove[i], "");
-		}
-		return h2Line + "\n";
-	}
-
-
-	private boolean isSQLCode(String line) {
-		String [] commentIdentifiers = {"--", "//", "#", "/*", "LOCK", "UNLOCK"};
-		for(int i=0; i < commentIdentifiers.length; i++){
-			if(line.startsWith(commentIdentifiers[i])){
-				return false;
-			}
-		}
-		return true;
 	}
 }
