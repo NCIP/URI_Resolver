@@ -19,7 +19,8 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 public class UriJDBCTemplate implements UriDAO {
 	private DataSource dataSource;
 	private JdbcTemplate jdbcTemplateObject;
-	static Logger logger = Logger.getLogger(UriJDBCTemplate.class);
+	private static Logger logger = Logger.getLogger(UriJDBCTemplate.class);
+	private static final String NULL_VALUE = "null";
 	
 	@Override
 	public void setDataSource(DataSource ds) {
@@ -75,7 +76,7 @@ public class UriJDBCTemplate implements UriDAO {
 	@Override
 	public String getIdentifierByID(String type, String id){
 		String resourceName = "";
-		String sql = createSelectFields("null", "im.identifier");
+		String sql = createSelectFields(NULL_VALUE, "im.identifier");
 	   
 		sql += "FROM urimap um ";											   
 		sql += "LEFT JOIN identifiermap im ";
@@ -129,7 +130,7 @@ public class UriJDBCTemplate implements UriDAO {
 	
 	@Override
 	public UriResults getURIMapByIdentifier(String type, String identifier){
-		String sql = createSelectFields("null", "null");
+		String sql = createSelectFields(NULL_VALUE, NULL_VALUE);
 
 		sql += "FROM urimap um ";
 		sql += this.createWhereTypeAndNameMatch("um", type, identifier);
@@ -147,7 +148,7 @@ public class UriJDBCTemplate implements UriDAO {
 
 	@Override
 	public UriResults getURIMapIdentifiers(String type, String identifier){
-		String sql = createSelectFields("null", "im.identifier");
+		String sql = createSelectFields(NULL_VALUE, "im.identifier");
     
 		sql += "FROM "; 
 		sql += "urimap um "; 
@@ -169,7 +170,7 @@ public class UriJDBCTemplate implements UriDAO {
 
 	@Override
 	public UriResults getURIMapByVersionIdentifier(String type, String identifier, String versionID){
-		String sql = createSelectFields("null", "null");
+		String sql = createSelectFields(NULL_VALUE, NULL_VALUE);
 
 		sql += "FROM urimap um ";
 
@@ -223,23 +224,14 @@ public class UriJDBCTemplate implements UriDAO {
 		String sql = "";
 		BufferedReader bufferedReader =  null;
 		Reader reader = null;
-			
 		try{
 			InputStream in =UriJDBCTemplate.class.getResourceAsStream("/uriresolver.sql");
 			reader = new InputStreamReader(in, "UTF-8");
             bufferedReader = new BufferedReader(reader);
             while (bufferedReader.ready()) {
-            	String line = bufferedReader.readLine(); 
- 				String trimmedLine = line.trim();
- 				if (!(trimmedLine.startsWith("--") || trimmedLine.startsWith("//") || trimmedLine.startsWith("#") || trimmedLine.startsWith("/*") || trimmedLine.startsWith("LOCK") || trimmedLine.startsWith("UNLOCK"))) {
- 					trimmedLine = trimmedLine.replaceAll("`", "");
- 					trimmedLine = trimmedLine.replaceAll("\\\\'", "''");
- 					trimmedLine = trimmedLine.replaceAll(" COLLATE utf8_bin", "");
- 					trimmedLine = trimmedLine.replaceAll(" CHARACTER SET utf8", "");
- 					trimmedLine = trimmedLine.replaceAll(" COLLATE utf8_unicode_ci", "");
- 					trimmedLine = trimmedLine.replaceAll(" ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", "");
- 					trimmedLine = trimmedLine.replaceAll("", "");
- 					sql += trimmedLine + "\n";
+            	String line = bufferedReader.readLine().trim(); 
+ 				if (this.isSQLCode(line)) {
+ 					sql += this.convertToH2(line);
  				}
             }
             bufferedReader.close();
@@ -263,5 +255,26 @@ public class UriJDBCTemplate implements UriDAO {
 			
 		this.jdbcTemplateObject.execute(sql);
 		return true;		
+	}
+
+
+	private String convertToH2(String mySQLLine) {
+		String [] stringsToRemove = {"`", " COLLATE utf8_bin", " CHARACTER SET utf8", " COLLATE utf8_unicode_ci", " ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin"};
+		String h2Line = mySQLLine.replaceAll("\\\\'", "''");
+		for(int i=0; i < stringsToRemove.length; i++){ 						
+			h2Line = h2Line.replaceAll(stringsToRemove[i], "");
+		}
+		return h2Line + "\n";
+	}
+
+
+	private boolean isSQLCode(String line) {
+		String [] commentIdentifiers = {"--", "//", "#", "/*", "LOCK", "UNLOCK"};
+		for(int i=0; i < commentIdentifiers.length; i++){
+			if(line.startsWith(commentIdentifiers[i])){
+				return false;
+			}
+		}
+		return true;
 	}
 }

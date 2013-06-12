@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
 public class ResolveURI {
 	ApplicationContext context;
 	UriJDBCTemplate uriJDBCTemplate;
-	static Logger logger = Logger.getLogger(ResolveURI.class);
+	private static Logger logger = Logger.getLogger(ResolveURI.class);
 	private static final String TYPE="type";
 	private static final String IDENTIFIER="identifier";
 	private static final int ACCESS_DENIED = 1045;
