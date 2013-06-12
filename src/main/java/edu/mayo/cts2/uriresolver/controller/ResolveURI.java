@@ -131,6 +131,9 @@ public class ResolveURI {
 		
 		if(inMemoryDBrequired){
 			ds = this.createInMemoryDatabase();
+			if(ds == null){
+				return false;
+			}
 		}
 		
 		uriJDBCTemplate.setDataSource(ds);
@@ -147,7 +150,7 @@ public class ResolveURI {
 		
 		if(connectionCode != 0){
 			logger.error("Unable to create in memory database.  Cannot continue.");
-			throw new RuntimeException();
+			return null;
 		}
 		
 		return ds;
@@ -161,7 +164,7 @@ public class ResolveURI {
 			DatabaseMetaData metaData = con.getMetaData();
 			for(int i=0; i < TABLENAMES.length; i++){
 				if(!this.tableExists(metaData, TABLENAMES[i])){
-					tablesExist = false;;
+					tablesExist = false;
 					logger.error("Database is missing table: " + TABLENAMES[i]);
 				}
 			}	
