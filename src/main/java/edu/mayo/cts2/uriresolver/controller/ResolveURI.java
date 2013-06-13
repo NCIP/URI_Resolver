@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import edu.mayo.cts2.uriresolver.dao.UriJDBCTemplate;
 import edu.mayo.cts2.uriresolver.dao.UriResults;
@@ -37,20 +38,61 @@ public class ResolveURI {
 	private static final int DATABASE_MISSING = 1049;
 	private static final String [] TABLENAMES = {"urimap", "versionmap", "identifiermap"};
 		
-	// -- ID
-	@RequestMapping("/id/{type}")
-	@ResponseBody 
-	public UriResults uriMapById(@PathVariable(TYPE) String type, @RequestParam(value = "id") String id){
+
+	// -----------------------
+	// Redirects
+	// -----------------------
+	
+	// EXAMPLE: /id/CODE_SYSTEM?id=rdf
+	// -------
+	@RequestMapping("/id/{type}") 
+	public ModelAndView uriMapById(@PathVariable(TYPE) String type, @RequestParam(value = "id") String id){
 		if(this.connectDB()){
-			String identifier;
-			identifier = uriJDBCTemplate.getIdentifierByID(type, id);
-			return uriMapByIdentifier(type, identifier);
+			String identifier = uriJDBCTemplate.getIdentifierByID(type, id);
+			//return uriMapByIdentifier(type, identifier);
+			return new ModelAndView("redirect:/id/" + type + "/" + identifier);
 		} 
 		
 		return null;
 	}
 
-	@RequestMapping(value={"/id/{type}/{identifier}"})
+	
+	// EXAMPLE:  /version/CODE_SYSTEM/AIR?versionID=1993
+	// -------
+	@RequestMapping("/version/{type}/{identifier}")  
+	public ModelAndView uriMapByVersionID(@PathVariable(TYPE) String type, 
+			@PathVariable(IDENTIFIER) String identifier, @RequestParam(value = "versionID") String versionID){
+		if(this.connectDB()){
+			String versionIdentifier = uriJDBCTemplate.getVersionIdentifierByVersionID(type, identifier, versionID);			
+			// return uriMapByIdentifier("CODE_SYSTEM_VERSION", versionIdentifier);
+			return new ModelAndView("redirect:/versions/CODE_SYSTEM_VERSION/" + versionIdentifier);
+		} 
+		
+		return null;
+	}
+
+	// EXAMPLE:  /version/CODE_SYSTEM/AIR/1993
+	// -------
+	@RequestMapping("/version/{type}/{identifier}/{versionID}")
+	//@ResponseBody
+	public ModelAndView uriMapByVersionIdentifier(@PathVariable(TYPE) String type, 
+			@PathVariable(IDENTIFIER) String identifier, @PathVariable("versionID") String versionID){
+		if(this.connectDB()){
+			String versionIdentifier = uriJDBCTemplate.getVersionIdentifierByVersionID(type, identifier, versionID);			
+//			return uriJDBCTemplate.getURIMapByVersionIdentifier(type, identifier, versionIdentifier);
+			return new ModelAndView("redirect:/versions/CODE_SYSTEM_VERSION/" + versionIdentifier);
+		} 
+		
+		return null;
+	}
+	
+	// -----------------------
+	// Returns JSON directly
+	// -----------------------
+	
+	// EXAMPLE: /id/CODE_SYSTEM/rdf
+	// -------
+	@RequestMapping(value={"/id/{type}/{identifier}"})  
 	@ResponseBody
 	public UriResults uriMapByIdentifier(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(this.connectDB()){
@@ -60,8 +102,9 @@ public class ResolveURI {
 		return null;
 	}
 
-	// -- IDS
-	@RequestMapping("/ids/{type}/{identifier}")
+	// EXAMPLE:  /ids/CODE_SYSTEM/AIR
+	// -------
+	@RequestMapping("/ids/{type}/{identifier}")  
 	@ResponseBody
 	public UriResults allUriMapIdentities(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(this.connectDB()){
@@ -71,32 +114,10 @@ public class ResolveURI {
 		return null;
 	}
 
-	// --- VERSION
-	@RequestMapping("/version/{type}/{identifier}")
-	@ResponseBody
-	public UriResults uriMapByVersionID(@PathVariable(TYPE) String type, 
-			@PathVariable(IDENTIFIER) String identifier, @RequestParam(value = "versionID") String versionID){
-		if(this.connectDB()){
-			String versionIdentifier = uriJDBCTemplate.getVersionIdentifierByVersionID(type, identifier, versionID);			
-			return uriMapByIdentifier("CODE_SYSTEM_VERSION", versionIdentifier);
-		} 
-		
-		return null;
-	}
 
-	@RequestMapping("/version/{type}/{identifier}/{versionIdentifier}")
-	@ResponseBody
-	public UriResults uriMapByVersionIdentifier(@PathVariable(TYPE) String type, 
-			@PathVariable(IDENTIFIER) String identifier, @PathVariable("versionIdentifier") String versionIdentifier){
-		if(this.connectDB()){
-			return uriJDBCTemplate.getURIMapByVersionIdentifier(type, identifier, versionIdentifier);
-		} 
-		
-		return null;
-	}
-
-	// -- VERSIONS
-	@RequestMapping("/versions/{type}/{identifier}")
+	// EXAMPLE:  /versions/CODE_SYSTEM_VERSION/AIR93
+	// -------
+	@RequestMapping("/versions/{type}/{identifier}") 
 	@ResponseBody
 	public UriResults allUriMapVersionIdentifiers(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(this.connectDB()){
@@ -106,6 +127,11 @@ public class ResolveURI {
 		return null;
 	}
    
+	
+	
+	// -----------------------
+	// --- Helper methods ----
+	// -----------------------
 	private boolean connectDB() {
 		if(uriJDBCTemplate != null && uriJDBCTemplate.isConnected()){
 			return true;
