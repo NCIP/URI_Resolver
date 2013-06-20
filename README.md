@@ -12,7 +12,7 @@ Select Database Connection Values
 ##### To use default database connection values
 1. Install MySQL server on the local machine to run on port 3306
 2. Create a MySQL account: `uriuser` with the password `uriuser`
-3. Create a MysQL database named `uriresolver`, give `uriuser` permissions to write to this database.
+3. Create a MySQL database named `uriresolver`, give `uriuser` permissions to write to this database.
 4. Download `uriresolver.sql` from github project. File is located in [src/main/resources](https://github.com/hardielv/URI_Resolver/tree/master/src/main/resources)
 5. Import data from the `uriresolver.sql` export file into the `uriresolver` database
 
