@@ -46,8 +46,8 @@ mysql> source uriresolver.sql
 </code></pre>
 
 ###MySQL Errors
-    13:06:52,434 ERROR [edu.mayo.cts2.uriresolver.dao.UriJDBCTemplate] (http--0.0.0.0-8180-1) Error connecting to data source: Access denied for user 'root'@'localhost' (using password: YES)
-    13:06:52,438 ERROR [edu.mayo.cts2.uriresolver.controller.ResolveURI] (http--0.0.0.0-8180-1) Unknown error while checking tables exist: Access denied for user 'root'@'localhost' (using password: YES)
+    13:06:52,434 ERROR [edu.mayo.cts2.uriresolver.dao.UriJDBCTemplate] (http--0.0.0.0-8180-1) Error connecting to data source: Access denied for user 'uriuser'@'localhost' (using password: YES)
+    13:06:52,438 ERROR [edu.mayo.cts2.uriresolver.controller.ResolveURI] (http--0.0.0.0-8180-1) Unknown error while checking tables exist: Access denied for user 'uriuser'@'localhost' (using password: YES)
     13:06:52,439 INFO  [edu.mayo.cts2.uriresolver.controller.ResolveURI] (http--0.0.0.0-8180-1) Creating an in memory database
     
 This error is generated when the program cannot connect a local mysql server with the given credentials.  These errors will only be generated when attempting to connect to MySQL, not the in-memory database.
