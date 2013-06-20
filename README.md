@@ -3,41 +3,46 @@ URI Resolver REST Interface For CTS2
  
 Install
 -------
-* Install war file (URI_Resolver-0.0.1-SNAPSHOT.war) to JBOSS or Tomcat server.
+1. Install war file, <code>URI_Resolver-0.0.1-SNAPSHOT.war</code> to JBOSS or Tomcat server.
+2. Select database connection values
+3. Test sample using url: [http://localhost/URI_Resolver-0.0.1.SNAPSHOT](http://localhost/URI_Resolver-0.0.1.SNAPSHOT)
 
-* Select database connection values
-	* Default database connection values
-		1. Install MySQL server on the local machine to run on port 3306
-		2. Create a MySQL account: *uriuser* with the password *uriuser*
-		3. Create a MysQL database named *uriresolver*
-		4. Import data from the uriresolver.sql export file to the *uriresolver* database
+Select Database Connection Values
+---------------------------------
+##### To use default database connection values
+1. Install MySQL server on the local machine to run on port 3306
+2. Create a MySQL account: `uriuser` with the password `uriuser`
+3. Create a MysQL database named `uriresolver`, give `uriuser` permissions to write to this database.
+4. Download `uriresolver.sql` from github project. File is located in [src/main/resources](https://github.com/hardielv/URI_Resolver/tree/master/src/main/resources)
+5. Import data from the `uriresolver.sql` export file into the `uriresolver` database
 
-	* User specified database connection values
-		1. Create a folder: **\<USER_HOME\>/.cts2_uri**
-		2. Create a file: **database.properties** and store this file in the .cts2_uri folder
-		3. Edit database.properties to contain the following
+##### To use user specified database connection values
+1. Create a folder: `<USER_HOME>/.cts2_uri`
+	* USER_HOME refers to the home directory of the account running JBOSS server (i.e. jboss if running on ubuntu)
+2. Create a file: `database.properties` and store this file in the `.cts2_uri` folder
+3. Edit `database.properties` to contain the following:
 <pre><code>jdbc.driverClassName=\<Driver for database\>
 jdbc.url=\<URL to connect to database\>
 jdbc.username=\<Database username\>
-jdbc.password=\<Database username's password\>
+jdbc.password=\<Database username\'s password\>
 </code></pre>
-		4. Example database.properties:
+4. Example `database.properties`:
 <pre><code>jdbc.driverClassName=com.mysql.jdbc.Driver
 jdbc.url=jdbc:mysql://localhost:3306/uriresolver
 jdbc.username=uriuser
 jdbc.password=uriuser
 </code></pre>
 
-	* In-memory database
-		1. An in-memory database will be utilized if the two previous options are not available.
-		2. Nothing is required to configure this database.  It will only exist during the REST connection.
+##### To use In-memory database
+An in-memory database will be utilized if the two previous options are not available.
+Nothing is required to configure this database.  It will only exist during the REST connection.
 	
 
 MySQL
 -----
 ###Creating a local database
-* Copy uriresolver.sql to machine running mySQL
-* Launch MySQL from the directory containing the uriresolver.sql file
+* Copy `uriresolver.sql` to machine running mySQL
+* Launch MySQL from the directory containing the `uriresolver.sql` file
 * Run the following commands within MySQL:
 
 <pre><code>mysql> create database uriresolver;
@@ -86,13 +91,13 @@ at org.jboss.modules.ConcurrentClassLoader.performLoadClassChecked(ConcurrentCla
 </code></pre>
 
 
-* To fix this error edit *$JBOSS_HOME/modules/sun/jdk/main/module.xml* file and add the following to paths section.
+* To fix this error edit `$JBOSS_HOME/modules/sun/jdk/main/module.xml` file and add the following to paths section.
 <pre><code>path name="com/sun/rowset/"
 path name="com/sun/rowset/internal/"
 path name="com/sun/rowset/providers/"
 </code></pre>
 
-* If this does not correct the error then download rowset jar file from Oracle sun website and extract to *$JAVA_HOME/modules/com/sun/rowset*
+* If this does not correct the error then download `rowset` jar file from Oracle sun website and extract to `$JBOSS_HOME/modules/com/sun/rowset`
 
 
 
