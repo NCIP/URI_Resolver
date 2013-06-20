@@ -10,41 +10,50 @@ Setup
 		jdbc.username=uriuser
 		jdbc.password=uriuser
 
-For the default values to work you must have a mysql server running on your local machine, the database uriresolver must already be created using the uriresolver.sql export file, and you must have a mysql account uriuser with the password as uriuser.
+* To use the default database connection values:
+	1. A MySQL server must be running on the local machine
+	2. The database uriresolver must already exist
+	3. Data must be imported from the uriresolver.sql export file
+	4. A MySQL account, uriuser, must exist with the password: uriuser
 
-* If you want to change the database connection values then in your home directory:
-** create a folder: .cts2_uri
-** create a file: database.properties and store file in .cts2_uri folder
-** edit database.properties to contain the following:
-		jdbc.driverClassName=<Driver for database>
-		jdbc.url=<URL to connect to database>
-		jdbc.username=<Database username>
-		jdbc.password=<Database username's password>
-		
+* To change the database connection values:
+	1. Create a folder: **\<USER_HOME\>/.cts2_uri**
+	2. Create a file: **database.properties** and store file in the .cts2_uri folder
+	3. Edit database.properties to contain the following
+<pre><code>jdbc.driverClassName=\<Driver for database\>
+jdbc.url=\<URL to connect to database\>
+jdbc.username=\<Database username\>
+jdbc.password=\<Database username's password\>
+</code></pre>
 
-* An in memory database will be utilized if the two previous options are not available.
+* An in-memory database will be utilized if the two previous options are not available.
 
-MySQL - Create local database
------------------------------
+MySQL - Creating a local database
+---------------------------------
 * Copy uriresolver.sql to machine running mySQL
-* Launch MySQL from the directory containing uriresolver.sql file
-* Run the following commands within mysql:
-		mysql> create database uriresolver;
-		mysql> use uriresolver;  
-		mysql> source uriresolver.sql
+* Launch MySQL from the directory containing the uriresolver.sql file
+* Run the following commands within MySQL:
 
+<pre><code>mysql> create database uriresolver;
+mysql> use uriresolver;  
+mysql> source uriresolver.sql
+</code></pre>
 
+MySQL Errors
+------------
+    13:06:52,434 ERROR [edu.mayo.cts2.uriresolver.dao.UriJDBCTemplate] (http--0.0.0.0-8180-1) Error connecting to data source: Access denied for user 'root'@'localhost' (using password: YES)
+    13:06:52,438 ERROR [edu.mayo.cts2.uriresolver.controller.ResolveURI] (http--0.0.0.0-8180-1) Unknown error while checking tables exist: Access denied for user 'root'@'localhost' (using password: YES)
+    13:06:52,439 INFO  [edu.mayo.cts2.uriresolver.controller.ResolveURI] (http--0.0.0.0-8180-1) Creating an in memory database
+    
+This error is generated when the program cannot connect a local mysql server with the given credentials.  These error will only be generated when attempting to connect to MySQL, not the in-memory database.
+Errors can be ignored unless you were expecting the MySQL connection to be successfull.  If this is the case check the credentials provided in the error messages.
 
 MySQL Warnings
 --------------
-13:06:52,261 WARN  [org.springframework.beans.factory.config.PropertyPlaceholderConfigurer] (http--0.0.0.0-8180-1) Could not load properties from URL [file:/home/jboss/.cts2_uri/database.properties]: /home/jboss/.cts2_uri/database.properties (No such file or directory)
+    13:06:52,261 WARN  [org.springframework.beans.factory.config.PropertyPlaceholderConfigurer] (http--0.0.0.0-8180-1) Could not load properties from URL [file:/home/jboss/.cts2_uri/database.properties]: /home/jboss/.cts2_uri/database.properties (No such file or directory)
 
+This warning is generated when the user's database.properties files is not found.  At this point the program will use the in-memory database solution.
 
-MySQL Warnings
---------------
-13:06:52,434 ERROR [edu.mayo.cts2.uriresolver.dao.UriJDBCTemplate] (http--0.0.0.0-8180-1) Error connecting to data source: Access denied for user 'root'@'localhost' (using password: YES)
-13:06:52,438 ERROR [edu.mayo.cts2.uriresolver.controller.ResolveURI] (http--0.0.0.0-8180-1) Unknown error while checking tables exist: Access denied for user 'root'@'localhost' (using password: YES)
-13:06:52,439 INFO  [edu.mayo.cts2.uriresolver.controller.ResolveURI] (http--0.0.0.0-8180-1) Creating an in memory database
 
 JBOSS
 -----
@@ -77,9 +86,9 @@ This warning is created when war file is loaded into JBoss.  This warning can be
 
 To fix this error edit $JBOSS_HOME/modules/sun/jdk/main/module.xml file and added the following to paths
 
-		<path name=”com/sun/rowset”/>
-		<path name=”com/sun/rowset/internal”/>
-		<path name=”com/sun/rowset/providers”/>
+		<path name="com/sun/rowset"/>
+		<path name="com/sun/rowset/internal"/>
+		<path name="com/sun/rowset/providers"/>
 
 If this does not correct the error then download rowset jar file from Oracle sun website and extract to $JAVA_HOME/modules/com/sun/rowset
 
