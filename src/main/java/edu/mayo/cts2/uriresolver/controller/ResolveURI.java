@@ -13,19 +13,23 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import edu.mayo.cts2.uriresolver.dao.UriJDBCTemplate;
+import edu.mayo.cts2.uriresolver.dao.UriResourceNames;
 import edu.mayo.cts2.uriresolver.dao.UriResults;
-import org.apache.log4j.Logger;
+import edu.mayo.cts2.uriresolver.dao.UriVersionIds;
 
 @Controller
 public class ResolveURI {
@@ -39,13 +43,48 @@ public class ResolveURI {
 	private static final String [] TABLENAMES = {"urimap", "versionmap", "identifiermap"};
 		
 
+	
+	@RequestMapping(method=RequestMethod.PUT, value="/versions/{type}/{identifier}")
+	public void saveVersionIdentifiers(@RequestBody UriResults uriResults, @PathVariable String type, @PathVariable String identifier){
+		uriJDBCTemplate.saveVersionIdentifiers(uriResults);
+	}
+	
+	@RequestMapping(method=RequestMethod.PUT, value="/ids/{type}/{identifier}")
+	public void saveIdentifiers(@RequestBody UriResults uriResults, @PathVariable String type, @PathVariable String identifier){
+		uriJDBCTemplate.saveIdentifiers(uriResults);
+	}
+
+	@RequestMapping(method=RequestMethod.GET, value={"/all/{type}"})  
+	@ResponseBody
+	public UriResourceNames getAllResourceNames(@PathVariable(TYPE) String type){
+		System.out.println("resource names");
+		System.out.flush();
+		if(this.connectDB()){
+			return uriJDBCTemplate.getAllResourceNames(type);	
+		} 
+		
+		return null;
+	}
+
+	@RequestMapping(method=RequestMethod.GET, value={"/all/{type}/{identifier}"})  
+	@ResponseBody
+	public UriVersionIds getAllVersionIds(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
+		System.out.println("version ids");
+		System.out.flush();
+		if(this.connectDB()){
+			return uriJDBCTemplate.getAllVersionIds(type, identifier);	
+		} 
+		
+		return null;
+	}
+	
 	// -----------------------
 	// Redirects
 	// -----------------------
 	
 	// EXAMPLE: /id/CODE_SYSTEM?id=rdf
 	// -------
-	@RequestMapping("/id/{type}") 
+	@RequestMapping(method=RequestMethod.GET, value="/id/{type}") 
 	public ModelAndView uriMapById(@PathVariable(TYPE) String type, @RequestParam(value = "id") String id){
 		if(this.connectDB()){
 			String identifier = uriJDBCTemplate.getIdentifierByID(type, id);
@@ -73,12 +112,14 @@ public class ResolveURI {
 
 	// EXAMPLE:  /version/CODE_SYSTEM/AIR/1993
 	// -------
-	@RequestMapping("/version/{type}/{identifier}/{versionID}")
+	@RequestMapping(method=RequestMethod.GET, value="/version/{type}/{identifier}/{versionID}")
 	//@ResponseBody
 	public ModelAndView uriMapByVersionIdentifier(@PathVariable(TYPE) String type, 
 			@PathVariable(IDENTIFIER) String identifier, @PathVariable("versionID") String versionID){
 		if(this.connectDB()){
-			String versionIdentifier = uriJDBCTemplate.getVersionIdentifierByVersionID(type, identifier, versionID);			
+			String versionIdentifier = uriJDBCTemplate.getVersionIdentifierByVersionID(type, identifier, versionID);
+			System.out.println("uriMapByVersionIdentifier: " + versionIdentifier);
+			System.out.flush();
 //			return uriJDBCTemplate.getURIMapByVersionIdentifier(type, identifier, versionIdentifier);
 			return new ModelAndView("redirect:/versions/CODE_SYSTEM_VERSION/" + versionIdentifier);
 		} 
@@ -92,7 +133,7 @@ public class ResolveURI {
 	
 	// EXAMPLE: /id/CODE_SYSTEM/rdf
 	// -------
-	@RequestMapping(value={"/id/{type}/{identifier}"})  
+	@RequestMapping(method=RequestMethod.GET, value={"/id/{type}/{identifier}"})  
 	@ResponseBody
 	public UriResults uriMapByIdentifier(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(this.connectDB()){
@@ -104,7 +145,7 @@ public class ResolveURI {
 
 	// EXAMPLE:  /ids/CODE_SYSTEM/AIR
 	// -------
-	@RequestMapping("/ids/{type}/{identifier}")  
+	@RequestMapping(method=RequestMethod.GET, value="/ids/{type}/{identifier}")  
 	@ResponseBody
 	public UriResults allUriMapIdentities(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(this.connectDB()){
@@ -117,7 +158,7 @@ public class ResolveURI {
 
 	// EXAMPLE:  /versions/CODE_SYSTEM_VERSION/AIR93
 	// -------
-	@RequestMapping("/versions/{type}/{identifier}") 
+	@RequestMapping(method=RequestMethod.GET, value="/versions/{type}/{identifier}") 
 	@ResponseBody
 	public UriResults allUriMapVersionIdentifiers(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(this.connectDB()){
@@ -144,7 +185,7 @@ public class ResolveURI {
 		uriJDBCTemplate = (UriJDBCTemplate) context.getBean("uriJDBCTemplate");
 		ds = (DataSource) context.getBean("dataSource");
 		int connectionCode = uriJDBCTemplate.checkDataSource(ds);
-		
+				
 		if(connectionCode != 0){
 			inMemoryDBrequired = true;
 			this.logConnectionError(connectionCode);
@@ -162,7 +203,12 @@ public class ResolveURI {
 			}
 		}
 		
-		uriJDBCTemplate.setDataSource(ds);
+		try {
+			uriJDBCTemplate.setDataSource(ds);
+		} catch (SQLException e) {
+			logger.error("Unable to connect datasource: " + e.getMessage());
+			return false;
+		}
 		return true;
 	}
 

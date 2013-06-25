@@ -27,6 +27,12 @@
                 href="versions/CODE_SYSTEM_VERSION/AIR93">Click here to See allVersionIdentfiersOfAVersion...</a>
         </h2>
     </div>
+    <div align='center'>
+        <h2>Admin Pages <br> <br> 
+                <a href="id_admin.jsp">Click here administer ID Data...</a><br>
+                <a href="version_admin.jsp">Click here administer Version Data...</a>
+        </h2>
+    </div>
     
 </body>
 </html>

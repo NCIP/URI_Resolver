@@ -2,6 +2,7 @@ package edu.mayo.cts2.uriresolver.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -9,6 +10,7 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.transaction.annotation.Transactional;
 
 
 
@@ -24,7 +26,7 @@ public class UriJDBCTemplate implements UriDAO {
 	}
 	
 	@Override
-	public void setDataSource(DataSource ds) {
+	public void setDataSource(DataSource ds) throws SQLException {
 		this.dataSource = ds;
 		this.jdbcTemplateObject = new JdbcTemplate(dataSource);
 	}
@@ -36,7 +38,6 @@ public class UriJDBCTemplate implements UriDAO {
 		int code = 0;
 		try {
 			con = ds.getConnection();
-			con.close();
 		} catch (SQLException e) {
 			String msg = e.getMessage();
 			logger.error("Error connecting to data source: " + msg + "\n");
@@ -98,7 +99,7 @@ public class UriJDBCTemplate implements UriDAO {
 		sql += "   um.resourcetype = '" + type + "'";
 		sql += "   AND";
 		sql += "   (";
-		sql += "     um.resourcename = '" + id + "'";
+		sql += "     im.resourcename = '" + id + "'";
 		sql += "     OR";
 		sql += "     im.identifier = '" + id + "'";
 		sql += "   )";
@@ -129,7 +130,8 @@ public class UriJDBCTemplate implements UriDAO {
 		sql += "   VersionID = '" + versionID + "'";
 	   
 		SqlRowSet data = this.jdbcTemplateObject.queryForRowSet(sql);		
-		
+		System.out.println(sql);
+		System.out.flush();
 		if(data.next()){
 			versionName = data.getString("VersionName");
 		}
@@ -221,6 +223,7 @@ public class UriJDBCTemplate implements UriDAO {
 		sql += this.createOnResourceTypeAndResourceNameMatch("um", "vm");
 		sql += this.createWhereTypeAndNameMatch("um", type, identifier);
 			
+		System.out.println(sql);
 		List<UriResults> data = this.jdbcTemplateObject.query(sql, new UriResultsMapper());
 	   
 		if(!data.isEmpty()){
@@ -229,4 +232,147 @@ public class UriJDBCTemplate implements UriDAO {
 		
 		return null;
 	}
+	
+	@Transactional
+	@Override
+	public void saveIdentifiers(UriResults uriResults){
+		this.printUriResults(uriResults);
+		String sql = "";
+		
+		// check if identifier already exists
+		
+		// if json.oldResourceName is not null
+		// then delete from urimap WHERE resourcetype = json.resourceType AND resourcename = json.oldResourceName]
+		
+		this.clearRecords("urimap", uriResults.getResourceType(), uriResults.getResourceName());
+		this.clearRecords("identifiermap", uriResults.getResourceType(), uriResults.getResourceName());
+	
+		// Insert urimap record
+		sql = "INSERT INTO urimap (resourcetype, resourcename, resourceuri, baseentityuri) ";
+		sql += "VALUES ('" + uriResults.getResourceType() + "', '" + uriResults.getResourceName() + "', '" + uriResults.getResourceURI() + "', '" + uriResults.getBaseEntityURI() + "')";
+		this.jdbcTemplateObject.update(sql);
+
+		// Insert identifiers to identifermap
+		if(uriResults.getIdentifiers() != null){
+			for(String identifier : uriResults.getIdentifiers()){
+				sql = "INSERT INTO identifiermap (resourcetype, resourcename, identifier) ";
+				sql += "VALUES ('" + uriResults.getResourceType() + "', '" + uriResults.getResourceName() + "', '" + identifier + "')";
+				this.jdbcTemplateObject.update(sql);
+			}
+		}
+	}
+	
+	@Transactional
+	private void clearRecords(String table, String type, String name){
+		String sql = "DELETE FROM " + table + " WHERE resourcetype = '" + type + "' AND resourcename = '" + name + "'";
+		this.jdbcTemplateObject.update(sql);
+		
+	}
+	
+	@Transactional
+	@Override
+	public void saveVersionIdentifiers(UriResults uriResults){
+		String sql;
+		this.printUriResults(uriResults);
+		
+		// check if identifier already exists
+
+		// Clear old URIMAP record
+		this.clearRecords("urimap", uriResults.getResourceType(), uriResults.getResourceName());
+	
+		// Create new URIMAP record
+		sql = "INSERT INTO urimap (resourcetype, resourcename, resourceuri) ";
+		sql += "VALUES ('" + uriResults.getResourceType() + "', '" + uriResults.getResourceName() + "', '" + uriResults.getResourceURI() + "')";
+		this.jdbcTemplateObject.update(sql);
+
+		
+		// Insert identifiers to versionmap
+		if(uriResults.getIdentifiers() != null){
+			for(String identifier : uriResults.getIdentifiers()){
+				String type = this.convertVersionTypeToType(uriResults.getResourceType());
+				sql = "INSERT INTO versionmap (resourcetype, resourcename, versionid, versionname, versiontype) ";
+				sql += "VALUES ('";
+				sql += type + "', '";								// _version_type_to_type(json.resourceType)
+				sql += uriResults.getVersionOf() + "', '";			// json.versionOf
+				sql += identifier + "', '";							// id
+				sql += uriResults.getResourceName() + "', '";		// json.resourceName
+				sql += uriResults.getResourceType() + "')";			// json.resourceType
+				this.jdbcTemplateObject.update(sql);
+			}
+		}
+	}
+	
+	private String convertVersionTypeToType(String versionType){
+		if(versionType.equals("CODE_SYSTEM_VERSION")){
+			return "CODE_SYSTEM";
+		}
+		
+		if(versionType.equals("MAP_VERSION")){
+			return "MAP";
+		}
+		
+		return null;
+	}
+	
+	public void printUriResults(UriResults uriResults){
+		String baseEntityURI = uriResults.getBaseEntityURI();
+		List<String> identifiers = uriResults.getIdentifiers();
+		String resourceName = uriResults.getResourceName();
+		String resourceType = uriResults.getResourceType();
+		String resourceURI = uriResults.getResourceURI();
+		String versionOf = uriResults.getVersionOf();
+		
+		System.out.println(baseEntityURI + ", " + resourceName + ", " + resourceType + ", " + resourceURI + ", " + versionOf);
+		if(identifiers != null){
+			for(String id : identifiers){
+				System.out.println(id);
+			}
+		}
+	}
+
+	public UriResourceNames getAllResourceNames(String type) {
+		UriResourceNames uriResourceNames = new UriResourceNames();
+		List<String> resourceNames = new ArrayList<String>();
+		
+		String sql = "SELECT resourcename FROM urimap ";
+		sql += "WHERE resourcetype = '" + type + "' ";
+		sql += "ORDER BY resourcename";
+			
+		SqlRowSet data = this.jdbcTemplateObject.queryForRowSet(sql);
+	   		
+		while(data.next()){
+			resourceNames.add(data.getString("resourcename"));
+		}
+		
+		uriResourceNames.setResourceType(type);
+		uriResourceNames.setResourceNames(resourceNames);
+		return uriResourceNames;
+	}
+
+	public UriVersionIds getAllVersionIds(String type, String identifier) {
+		UriVersionIds uriVersionIds = new UriVersionIds();
+		List<String> versionIds = new ArrayList<String>();
+		
+		String sql = "SELECT versionid FROM versionmap ";
+		sql += "WHERE (resourcetype = '" + type + "' ";
+		sql += "       AND resourcename = '" + identifier + "') ";
+		sql += "      OR ";
+		sql += "      (versiontype = '" + type + "' ";
+		sql += "       AND versionname = '" + identifier + "') ";
+		sql += "ORDER BY versionid ";
+		
+		System.out.println(sql);
+		System.out.flush();
+			
+		SqlRowSet data = this.jdbcTemplateObject.queryForRowSet(sql);
+	   		
+		while(data.next()){
+			versionIds.add(data.getString("versionid"));
+		}
+		
+		uriVersionIds.setResourceType(type);
+		uriVersionIds.setResourceName(identifier);
+		uriVersionIds.setVersionIds(versionIds);
+		return uriVersionIds;
+	}	
 }

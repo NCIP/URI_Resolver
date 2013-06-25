@@ -15,7 +15,6 @@
    		<property name="locations">
    			<list>
  				<value>classpath:database.properties</value>
-<!-- 			<value>${config}</value>   -->
 				<value>file:#{ systemProperties['user.home']}/.cts2_uri/database.properties</value>     
 			</list>
 		</property>		
@@ -24,6 +23,14 @@
    <bean id="uriJDBCTemplate" 
       class="edu.mayo.cts2.uriresolver.dao.UriJDBCTemplate">
  <!-- 	  <property name="dataSource"  ref="dataSource" />  -->     
+   </bean>
+   
+   <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+  		<property name="dataSource" ref="dataSource"/>
+   </bean>
+
+   <bean id="txManagerH2" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+  		<property name="dataSource" ref="h2DataSource"/>
    </bean>
 
    <bean id="dataSource" 
@@ -40,15 +47,4 @@
       <property name="driverClassName" value="org.h2.Driver" />
       <property name="url" value="jdbc:h2:mem:uriresolver;MODE=MySQL;DB_CLOSE_DELAY=-1" />
    </bean>
-
-<!--  
-;INIT=runscript from 'classpath:uriresolver.sql'
-   <bean id="dataSource" 
-      class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-      <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-      <property name="url" value="jdbc:mysql://localhost:3306/uriresolver" />
-      <property name="username" value="root" />
-      <property name="password" value="root" />
-   </bean>
-    -->
 </beans>
