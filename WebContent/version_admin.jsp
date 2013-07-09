@@ -5,7 +5,7 @@
     <title></title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
 
-    <link rel="stylesheet" href="../style.css" type="text/css" />
+  <!--   <link rel="stylesheet" href="../style.css" type="text/css" />  -->
 
     <script type="text/javascript">
 
@@ -44,6 +44,7 @@
                     $('#resourceUri').val(data.resourceURI);
                     $('#versionOf').val(data.versionOf);
 
+                    
                     $('#identifiers').empty();
                     for(i in data.identifiers){
                         addIdentifier(data.identifiers[i]);
@@ -86,7 +87,7 @@
 	                	else{
 	                		alert('There was an ' + errorThrown +
                                     ' error due to a ' + textStatus + 
-                                    ' condition.');
+                                    ' condition: ' + XMLHttpRequest.status);
 	                	}
 	                },
 	                success: function(data) {
@@ -114,6 +115,12 @@
 	                    if( XMLHttpRequest.status == '404'){
 	                        alert("Error collecting data.");
 	                    }
+	                	else{
+	                		alert('There was an ' + errorThrown +
+                                    ' error due to a ' + textStatus + 
+                                    ' condition: ' + XMLHttpRequest.status);
+	                	}
+
 	                },
 	                success: function(data) {
 	                	var select = document.getElementById("versionIdentifierLoad");
@@ -149,9 +156,11 @@
                     if( XMLHttpRequest.status == '404'){
                         alert("No URI Map with identifier " + vID + " was found.");
                     }
-                    else {
-	                    alert("Unknown error");
-                    }
+                	else{
+                		alert('There was an ' + errorThrown +
+                                ' error due to a ' + textStatus + 
+                                ' condition: ' + XMLHttpRequest.status);
+                	}
                 },
                 success: function(data) {
                     setIds(data);
@@ -170,6 +179,11 @@
                     if( XMLHttpRequest.status == '404'){
                         alert("No URI Map with identifier " + $('#versionIdentifierLoad').val() + " was found.");
                     }
+                	else{
+                		alert('There was an ' + errorThrown +
+                                ' error due to a ' + textStatus + 
+                                ' condition: ' + XMLHttpRequest.status);
+                	}
                 },
                 success: function(data) {
                     setIds(data);
@@ -197,12 +211,12 @@
                     resourceURI : $('#resourceUri').val(),
                     versionOf : $('#versionOf').val(),
                     identifiers : []
-                }
+                };
 
                 $('.identifierInput').each(function(){
                     var val = $(this).val();
                     if(val && val != ''){
-                        json.identifiers.push($(this).val())
+                        json.identifiers.push($(this).val());
                     }
                 });
 

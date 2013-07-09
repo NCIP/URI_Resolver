@@ -23,8 +23,7 @@ public class ResolveURI {
 	private UriDAO uriDAO;
 	private static final String TYPE="type";
 	private static final String IDENTIFIER="identifier";
-		
-
+	private static final String VERSIONID = "versionID";
 	
 	@RequestMapping(method=RequestMethod.PUT, value="/versions/{type}/{identifier}")
 	public void saveVersionIdentifiers(@RequestBody UriResults uriResults, @PathVariable String type, @PathVariable String identifier){
@@ -36,11 +35,12 @@ public class ResolveURI {
 		uriDAO.saveIdentifiers(uriResults);
 	}
 
-	@RequestMapping(method=RequestMethod.GET, value={"/all/{type}"})  
+	@RequestMapping(method=RequestMethod.GET, value="/all/{type}")  
 	@ResponseBody
 	public UriResourceNames getAllResourceNames(@PathVariable(TYPE) String type){
 		if(PRINT){
 			System.out.println("getAllResourceNames");
+			System.out.println("/all/" + type);
 		}
 		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
@@ -55,11 +55,12 @@ public class ResolveURI {
 		return null;
 	}
 
-	@RequestMapping(method=RequestMethod.GET, value={"/all/{type}/{identifier}"})  
+	@RequestMapping(method=RequestMethod.GET, value="/all/{type}/{identifier}")   
 	@ResponseBody
 	public UriVersionIds getAllVersionIds(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(PRINT){
 			System.out.println("getAllVersionIds");
+			System.out.println("/all/" + type + "/" + identifier);
 		}
 		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
@@ -83,11 +84,16 @@ public class ResolveURI {
 	// EXAMPLE: /id/CODE_SYSTEM?id=rdf
 	// -------
 	@RequestMapping(method=RequestMethod.GET, value="/id/{type}") 
+//	@ResponseBody
 	public ModelAndView uriMapById(@PathVariable(TYPE) String type, @RequestParam(value = "id") String id){
+		if(PRINT){
+			System.out.println("uriMapById");
+			System.out.println("/id/" + type + "?" + id);
+		}
+		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
 		if(uriDAO != null){
 			String identifier = uriDAO.getIdentifierByID(type, id);
-			//return uriMapByIdentifier(type, identifier);
 			return new ModelAndView("redirect:/id/" + type + "/" + identifier);
 		} 		
 		
@@ -97,13 +103,18 @@ public class ResolveURI {
 	
 	// EXAMPLE:  /version/CODE_SYSTEM/AIR?versionID=1993
 	// -------
-	@RequestMapping("/version/{type}/{identifier}")  
+	@RequestMapping(method=RequestMethod.GET, value="/version/{type}/{identifier}")  
+//	@ResponseBody
 	public ModelAndView uriMapByVersionID(@PathVariable(TYPE) String type, 
-			@PathVariable(IDENTIFIER) String identifier, @RequestParam(value = "versionID") String versionID){
+			@PathVariable(IDENTIFIER) String identifier, @RequestParam(value = VERSIONID) String versionID){
+		if(PRINT){
+			System.out.println("uriMapByVersionID");
+			System.out.println("/version/" + type + "/" + identifier + "?" + versionID);
+		}
+		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
 		if(uriDAO != null){
 			String versionIdentifier = uriDAO.getVersionIdentifierByVersionID(type, identifier, versionID);			
-			// return uriMapByIdentifier("CODE_SYSTEM_VERSION", versionIdentifier);
 			return new ModelAndView("redirect:/versions/CODE_SYSTEM_VERSION/" + versionIdentifier);
 		} 
 		
@@ -116,13 +127,18 @@ public class ResolveURI {
 	@RequestMapping(method=RequestMethod.GET, value="/version/{type}/{identifier}/{versionID}")
 	//@ResponseBody
 	public ModelAndView uriMapByVersionIdentifier(@PathVariable(TYPE) String type, 
-			@PathVariable(IDENTIFIER) String identifier, @PathVariable("versionID") String versionID){
+			@PathVariable(IDENTIFIER) String identifier, @PathVariable(VERSIONID) String versionID){
+		if(PRINT){
+			System.out.println("uriMapByVersionIdentifier");
+			System.out.println("/version/" + type + "/" + identifier + "/" + versionID);
+		}
+		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
 		if(uriDAO != null){
 			String versionIdentifier = uriDAO.getVersionIdentifierByVersionID(type, identifier, versionID);
-			System.out.println("uriMapByVersionIdentifier: " + versionIdentifier);
-			System.out.flush();
-//			return uriJDBCTemplate.getURIMapByVersionIdentifier(type, identifier, versionIdentifier);
+			if(PRINT){
+				System.out.println("uriMapByVersionIdentifier: " + versionIdentifier);
+			}
 			return new ModelAndView("redirect:/versions/CODE_SYSTEM_VERSION/" + versionIdentifier);
 		} 
 		
@@ -136,9 +152,14 @@ public class ResolveURI {
 	
 	// EXAMPLE: /id/CODE_SYSTEM/rdf
 	// -------
-	@RequestMapping(method=RequestMethod.GET, value={"/id/{type}/{identifier}"})  
+	@RequestMapping(method=RequestMethod.GET, value="/id/{type}/{identifier}")  
 	@ResponseBody
 	public UriResults uriMapByIdentifier(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
+		if(PRINT){
+			System.out.println("uriMapByIdentifier");
+			System.out.println("/id/" + type + "/" + identifier);
+		}
+		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
 		if(uriDAO != null){
 			return uriDAO.getURIMapByIdentifier(type, identifier);	
@@ -153,6 +174,11 @@ public class ResolveURI {
 	@RequestMapping(method=RequestMethod.GET, value="/ids/{type}/{identifier}")  
 	@ResponseBody
 	public UriResults allUriMapIdentities(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
+		if(PRINT){
+			System.out.println("allUriMapIdentities");
+			System.out.println("/ids/" + type + "/" + identifier);
+		}
+		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
 		if(uriDAO != null){
 			return uriDAO.getURIMapIdentifiers(type, identifier);	
@@ -168,6 +194,11 @@ public class ResolveURI {
 	@RequestMapping(method=RequestMethod.GET, value="/versions/{type}/{identifier}") 
 	@ResponseBody
 	public UriResults allUriMapVersionIdentifiers(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
+		if(PRINT){
+			System.out.println("allUriMapVersionIdentifiers");
+			System.out.println("/versions/" + type + "/" + identifier);
+		}
+		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
 		if(uriDAO != null){
 			return uriDAO.getURIMapVersionIdentifiers(type, identifier);		

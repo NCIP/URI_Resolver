@@ -124,7 +124,7 @@ public class UriDAOJdbc implements UriDAO {
 	   
 		if(!data.isEmpty()){
 			if(PRINT){
-				System.out.println("data.get(0): " + data.get(0));
+				System.out.println("data.get(0): " + data.get(0).getResourceName());
 			}
 			return data.get(0);
 		}
@@ -150,7 +150,7 @@ public class UriDAOJdbc implements UriDAO {
 	   
 		if(!data.isEmpty()){
 			if(PRINT){
-				System.out.println("data.get(0): " + data.get(0));
+				System.out.println("data.get(0): " + data.get(0).getResourceName());
 			}
 			return data.get(0);
 		}
@@ -174,7 +174,7 @@ public class UriDAOJdbc implements UriDAO {
 
 		if(!data.isEmpty()){
 			if(PRINT){
-				System.out.println("data.get(0): " + data.get(0));
+				System.out.println("data.get(0): " + data.get(0).getResourceName());
 			}
 			return data.get(0);
 		}
@@ -199,7 +199,7 @@ public class UriDAOJdbc implements UriDAO {
 	   
 		if(!data.isEmpty()){
 			if(PRINT){
-				System.out.println("data.get(0): " + data.get(0));
+				System.out.println("data.get(0): " + data.get(0).getResourceName());
 			}
 			return data.get(0);
 		}

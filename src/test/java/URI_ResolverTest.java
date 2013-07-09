@@ -103,15 +103,7 @@ public class URI_ResolverTest {
 			}
 		}    
 
-		@Test
-		public void testJSONContentType() throws Exception {	 
-			for(int i=0; i < INPUT_URL.length; i++){
-				if(REDIRECTED_URL[i] == null){
-					mockMvc.perform( get(INPUT_URL[i]).accept(MediaType.APPLICATION_JSON)).andExpect(content().contentType("application/json;charset=UTF-8"));
-				}
-			}
-		}    
-
+		
 		@Test
 		public void testPrintAll() throws Exception {
 			if(PRINT){
@@ -134,6 +126,20 @@ public class URI_ResolverTest {
 			}
 		}    
 		
+		
+		@Test
+		public void testJSONContentType() throws Exception {	 
+			for(int i=0; i < INPUT_URL.length; i++){
+				if(REDIRECTED_URL[i] == null){
+					System.out.println(INPUT_URL[i]);
+					
+					mockMvc.perform( get(INPUT_URL[i]).accept(MediaType.APPLICATION_JSON)).andExpect(content().contentType("application/json"));
+				}
+			}
+		}    
+
+		
+
 		@Test
 		public void testJSONValues() throws Exception {	
 			for(int i=0; i < INPUT_URL.length; i++){ 
@@ -160,6 +166,7 @@ public class URI_ResolverTest {
 					results.andDo(print());
 				}
 			}
+			
 
 //			mockMvc.perform( get(INPUT_URL[1]).accept(MediaType.APPLICATION_JSON))
 //			.andExpect(jsonPath("$.resourceType").value("CODE_SYSTEM"))
@@ -167,6 +174,7 @@ public class URI_ResolverTest {
 //			.andExpect(jsonPath("$.resourceURI").value("http://www.w3.org/1999/02/22-rdf-syntax-ns#"))
 //			.andExpect(jsonPath("$.baseEntityURI").value("http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
 		}    
+		
 		
 		@Configuration
 		@EnableWebMvc
