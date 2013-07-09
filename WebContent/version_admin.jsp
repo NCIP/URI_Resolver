@@ -16,7 +16,18 @@
                 $(this).val("");
             });
             $('#identifiers').empty();
-        	document.getElementById("identifierLoad").options.length = 0;
+            document.getElementById("identifierLoad").options.length = 0;
+        	document.getElementById("versionIdentifierLoad").options.length = 0;
+        	document.getElementById("versionIdentifierLoad").style.visibility='visible';
+        }
+        
+        function clearAll() {
+            $('input').each(function(){
+                $(this).val("");
+            });
+            $('#identifiers').empty();
+            document.getElementById("resourceTypeLoad").options[0].selected = true;
+            document.getElementById("identifierLoad").options.length = 0;
         	document.getElementById("versionIdentifierLoad").options.length = 0;
         	document.getElementById("versionIdentifierLoad").style.visibility='visible';
         }
@@ -61,15 +72,22 @@
         		clearForm();
         	}
         	else{
+            	var type = $('#resourceTypeLoad').val();
+            	var restURL = serviceUrl + "all/" + type;
 	            $.ajax({
 	                type: "GET",
-	                url: serviceUrl + "all/" + $('#resourceTypeLoad').val(),
+	                url: restURL,
 	                dataType: 'json',
 	                contentType: "application/json",
 	                error: function(XMLHttpRequest, textStatus, errorThrown){
-	                    if( XMLHttpRequest.status == '404'){
-	                        alert("Error collecting data.");
+	                	if( XMLHttpRequest.status == '404'){
+	                        alert("404 Error collecting data.");
 	                    }
+	                	else{
+	                		alert('There was an ' + errorThrown +
+                                    ' error due to a ' + textStatus + 
+                                    ' condition.');
+	                	}
 	                },
 	                success: function(data) {
 	                	clearForm();
@@ -85,7 +103,8 @@
         }
         
         function loadVersionIds() {
-        	if($('#resourceTypeLoad').val() == "CODE_SYSTEM") {
+        	var type = $('#resourceTypeLoad').val();
+        	if(type == "CODE_SYSTEM") {
 	            $.ajax({
 	                type: "GET",
 	                url: serviceUrl + "all/" + $('#resourceTypeLoad').val() + "/" + $('#identifierLoad').val(),
@@ -99,6 +118,7 @@
 	                success: function(data) {
 	                	var select = document.getElementById("versionIdentifierLoad");
 	                	select.options.length=0;
+	                	document.getElementById("versionIdentifierLoad").style.visibility='visible';
 	                	select.options[0] = new Option("Select Version", "SELECT");
 	                    for(i in data.versionIds){
 	                    	select.options[select.options.length] = new Option(data.versionIds[i], data.versionIds[i]);
@@ -119,7 +139,6 @@
         	var id = escape($('#identifierLoad').val());
         	var vID = escape($('#versionIdentifierLoad').val());
         	var restURL = serviceUrl + "version/" + type + "/" + id + "/" + vID;
-        	alert("restURL = " + restURL);
         	
             $.ajax({
                 type: "GET",
@@ -167,7 +186,7 @@
             });
  
             $('#btnClearAll').click(function() {
-            	clearForm();
+            	clearAll();
                 return false;
             });
 

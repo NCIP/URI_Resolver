@@ -1,4 +1,4 @@
-package edu.mayo.cts2.uriresolver.dao;
+package edu.mayo.cts2.uriresolver.beans;
 
 import java.util.List;
 
@@ -47,6 +47,22 @@ public class UriResults {
 	}
 	public void setIdentifiers(List<String> identifiers) {
 		this.identifiers = identifiers;
+	}
+
+	public void print(){
+		String baseEntityURI = getBaseEntityURI();
+		List<String> identifiers = getIdentifiers();
+		String resourceName = getResourceName();
+		String resourceType = getResourceType();
+		String resourceURI = getResourceURI();
+		String versionOf = getVersionOf();
+		
+		System.out.println(baseEntityURI + ", " + resourceName + ", " + resourceType + ", " + resourceURI + ", " + versionOf);
+		if(identifiers != null){
+			for(String id : identifiers){
+				System.out.println(id);
+			}
+		}
 	}
 
 }

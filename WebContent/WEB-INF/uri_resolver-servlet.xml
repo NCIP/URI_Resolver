@@ -12,10 +12,12 @@ xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springf
     <context:component-scan
         base-package="edu.mayo.cts2.uriresolver" />
         
- 	<tx:annotation-driven />
-
+   	<mvc:annotation-driven /> 
+	<tx:annotation-driven />
+ 
  	<!-- 
    	<mvc:annotation-driven /> 
+	<tx:annotation-driven />
 
  		<bean class="edu.mayo.cts2.framework.webapp.rest.osgi.OsgiAnnotationHandlerMapping">
 			<property name="order" value="0" />
@@ -26,14 +28,18 @@ xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springf
  		<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
 			<property name="useSuffixPatternMatch" value="false"></property>
 		</bean>
-	 -->
+		
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
 		<property name="order" value="0" />
       	<property name="useDefaultSuffixPattern" value="false" />
    	</bean>
-   
-   
+		
+	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+      	<property name="useDefaultSuffixPattern" value="false" />
+   	</bean>
  	
+	 -->
+
     <bean id="viewResolver"
         class="org.springframework.web.servlet.view.UrlBasedViewResolver">
         <property name="viewClass"

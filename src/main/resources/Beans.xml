@@ -21,10 +21,11 @@
    </bean>    
    
    <bean id="uriJDBCTemplate" 
-      class="edu.mayo.cts2.uriresolver.dao.UriJDBCTemplate">
+      class="edu.mayo.cts2.uriresolver.dao.UriDAOJdbc">
  <!-- 	  <property name="dataSource"  ref="dataSource" />  -->     
    </bean>
    
+   <!-- 
    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
   		<property name="dataSource" ref="dataSource"/>
    </bean>
@@ -32,7 +33,8 @@
    <bean id="txManagerH2" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
   		<property name="dataSource" ref="h2DataSource"/>
    </bean>
-
+ -->
+ 
    <bean id="dataSource" 
       class="org.springframework.jdbc.datasource.DriverManagerDataSource">
       <property name="driverClassName" value="${jdbc.driverClassName}" />

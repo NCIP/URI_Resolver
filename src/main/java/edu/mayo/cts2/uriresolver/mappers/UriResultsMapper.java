@@ -1,4 +1,4 @@
-package edu.mayo.cts2.uriresolver.dao;
+package edu.mayo.cts2.uriresolver.mappers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.jdbc.core.RowMapper;
+
+import edu.mayo.cts2.uriresolver.beans.UriResults;
 
 public class UriResultsMapper implements RowMapper<UriResults>{
 	@Override

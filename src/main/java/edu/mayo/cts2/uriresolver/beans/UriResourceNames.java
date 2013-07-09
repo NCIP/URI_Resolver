@@ -1,4 +1,4 @@
-package edu.mayo.cts2.uriresolver.dao;
+package edu.mayo.cts2.uriresolver.beans;
 
 import java.util.List;
 
