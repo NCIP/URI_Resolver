@@ -3,19 +3,16 @@ import static edu.mayo.cts2.uriresolver.constants.UriResolverConstants.*;
 import edu.mayo.cts2.uriresolver.beans.UriResults;
 
 public class UriSQL {
-	public static String createSelectFields(String versionOf, String identifier){
-		String sql = "";
-		sql += "SELECT ";
+	public static String sqlSELECTBaseFieldsFromUMTable(){
+		String sql = "SELECT ";
 		sql += "um.resourcetype ResourceType, ";
 		sql += "um.resourcename ResourceName, ";
 		sql += "um.resourceuri ResourceURI, ";
 		sql += "um.baseentityuri BaseEntityURI, ";
-		sql += versionOf + " VersionOf, ";
-		sql += identifier + " Identifier ";
 		return sql;
 	}
 	
-	public static String createOnResourceTypeAndResourceNameMatch(String table1, String table2){
+	public static String sqlONResourceTypeANDResourceNamesFromTwoTables(String table1, String table2){
 		String sql = "ON  ";
 		sql += "( ";
 		sql += table1 + ".resourcetype = " + table2 + ".resourcetype ";
@@ -25,7 +22,7 @@ public class UriSQL {
 		return sql;
 	}
 
-	public static String createWhereTypeAndNameMatch(String table, String type, String name) {
+	public static String sqlWHEREResourceTypeANDResourceNameFromTable(String table, String type, String name) {
 		String sql = "WHERE  ";
 		sql += table + ".resourcetype =  '" + type + "' ";
 		sql += "AND ";
@@ -34,12 +31,14 @@ public class UriSQL {
 	}
 
 	public static String createSQLgetIdentifierByID(String type, String id) {
-		String sql = UriSQL.createSelectFields(NULL_VALUE, "im.identifier");
+		String sql = sqlSELECTBaseFieldsFromUMTable();
+		sql += NULL_VALUE + " VersionOf, ";
+		sql += "im.identifier Identifier ";
 		   
 		sql += "FROM urimap um ";											   
 		sql += "LEFT JOIN identifiermap im ";
 		
-		sql += UriSQL.createOnResourceTypeAndResourceNameMatch("im", "um");
+		sql += sqlONResourceTypeANDResourceNamesFromTwoTables("im", "um");
 
 		sql += " WHERE"; 
 		sql += "   um.resourcetype = '" + type + "'";
@@ -71,16 +70,22 @@ public class UriSQL {
 
 	public static String createSQLgetURIMapByIdentifier(String type,
 			String identifier) {
-		String sql = UriSQL.createSelectFields(NULL_VALUE, NULL_VALUE);
+		String sql = sqlSELECTBaseFieldsFromUMTable();
+		
+		sql += NULL_VALUE + " VersionOf, ";
+		sql += NULL_VALUE + " Identifier ";
 
 		sql += "FROM urimap um ";
-		sql += UriSQL.createWhereTypeAndNameMatch("um", type, identifier);
+		sql += sqlWHEREResourceTypeANDResourceNameFromTable("um", type, identifier);
 		return sql;
 	}
 
 	public static String createSQLgetURIMapIdentifiers(String type,
 			String identifier) {
-		String sql = UriSQL.createSelectFields(NULL_VALUE, "im.identifier");
+		String sql = sqlSELECTBaseFieldsFromUMTable();
+		
+		sql += NULL_VALUE + " VersionOf, ";
+		sql += "im.identifier Identifier ";
 	    
 		sql += "FROM "; 
 		sql += "urimap um "; 
@@ -88,14 +93,17 @@ public class UriSQL {
 		sql += "LEFT JOIN  ";
 		sql += "identifiermap im ";
 		  
-		sql += UriSQL.createOnResourceTypeAndResourceNameMatch("im", "um");
-		sql += UriSQL.createWhereTypeAndNameMatch("um", type, identifier);
+		sql += sqlONResourceTypeANDResourceNamesFromTwoTables("im", "um");
+		sql += sqlWHEREResourceTypeANDResourceNameFromTable("um", type, identifier);
 		return sql;
 	}
 
 	public static String createSQLgetURIMapByVersionIdentifier(String type,
 			String identifier, String versionID) {
-		String sql = UriSQL.createSelectFields(NULL_VALUE, NULL_VALUE);
+		String sql = sqlSELECTBaseFieldsFromUMTable();
+		
+		sql += NULL_VALUE + " VersionOf, ";
+		sql += NULL_VALUE + " Identifier ";
 
 		sql += "FROM urimap um ";
 
@@ -103,8 +111,8 @@ public class UriSQL {
 		sql += "INNER JOIN  ";
 		sql += "versionmap vm ";
 		  
-		sql += UriSQL.createOnResourceTypeAndResourceNameMatch("um", "vm");
-		sql += UriSQL.createWhereTypeAndNameMatch("vm", type, identifier);
+		sql += sqlONResourceTypeANDResourceNamesFromTwoTables("um", "vm");
+		sql += sqlWHEREResourceTypeANDResourceNameFromTable("vm", type, identifier);
    
 		sql += "AND ";
 		sql += "(";
@@ -116,16 +124,24 @@ public class UriSQL {
 
 	public static String createSQLgetURIMapVersionIdentifiers(String type,
 			String identifier) {
-		String sql = UriSQL.createSelectFields("vm.resourcename", "vm.versionid");
+		String sql = sqlSELECTBaseFieldsFromUMTable();
+		
+		sql += "vm.resourcename VersionOf, ";
+		sql += "vm.versionid Identifier ";
 		
 		sql += "FROM "; 
 		sql += "urimap um "; 
 
 		sql += "LEFT JOIN  ";
 		sql += "versionmap vm ";
+		sql += "ON  ";
+		sql += "( ";
+		sql += "um.resourcetype = vm.versiontype ";
+		sql += "  AND ";
+		sql += "um.resourcename = vm.versionname ";
+		sql += ") ";
 		  
-		sql += UriSQL.createOnResourceTypeAndResourceNameMatch("um", "vm");
-		sql += UriSQL.createWhereTypeAndNameMatch("um", type, identifier);
+		sql += sqlWHEREResourceTypeANDResourceNameFromTable("um", type, identifier);
 		return sql;
 	}
 
@@ -168,20 +184,6 @@ public class UriSQL {
 		return sql;
 	}
 
-
-
-	public static String convertVersionTypeToType(String versionType){
-		if(versionType.equals("CODE_SYSTEM_VERSION")){
-			return "CODE_SYSTEM";
-		}
-		
-		if(versionType.equals("MAP_VERSION")){
-			return "MAP";
-		}
-		
-		return null;
-	}
-
 	public static String createSQLgetAllResourceNames(String type) {
 		String sql = "SELECT resourcename FROM urimap ";
 		sql += "WHERE resourcetype = '" + type + "' ";
@@ -201,4 +203,15 @@ public class UriSQL {
 		return sql;
 	}
 	
+	public static String convertVersionTypeToType(String versionType){
+		if(versionType.equals("CODE_SYSTEM_VERSION")){
+			return "CODE_SYSTEM";
+		}
+		
+		if(versionType.equals("MAP_VERSION")){
+			return "MAP";
+		}
+		
+		return null;
+	}
 }

@@ -11,27 +11,156 @@
 
         var serviceUrl = "";
 
-        function clearForm() {
+        function clearURIMapDetails() {
             $('input').each(function(){
                 $(this).val("");
-            });
+            });        	
+        }
+        
+        function clearForm() {
+        	clearURIMapDetails();
             $('#identifiers').empty();
-            document.getElementById("identifierLoad").options.length = 0;
-        	document.getElementById("versionIdentifierLoad").options.length = 0;
-        	document.getElementById("versionIdentifierLoad").style.visibility='visible';
+            document.getElementById("listVersionOf").options.length = 0;
+        	document.getElementById("listVersionID").options.length = 0;
+        	document.getElementById("listVersionID").style.visibility='visible';
         }
         
         function clearAll() {
-            $('input').each(function(){
-                $(this).val("");
-            });
+        	clearURIMapDetails();
             $('#identifiers').empty();
-            document.getElementById("resourceTypeLoad").options[0].selected = true;
-            document.getElementById("identifierLoad").options.length = 0;
-        	document.getElementById("versionIdentifierLoad").options.length = 0;
-        	document.getElementById("versionIdentifierLoad").style.visibility='visible';
+            document.getElementById("listResourceType").options[0].selected = true;
+            document.getElementById("listVersionOf").options.length = 0;
+        	document.getElementById("listVersionID").options.length = 0;
+        	document.getElementById("listVersionID").style.visibility='visible';
         }
         
+        // Called when "Resource Type" list is changed
+        function loadVersionOf() {
+        	if(document.getElementById("listResourceType").selectedIndex == 0) {
+        		clearForm();
+        	}
+        	else{
+            	var type = $('#listResourceType').val();
+            	var restURL = serviceUrl + "all/" + type;
+	            $.ajax({
+	                type: "GET",
+	                url: restURL,
+	                dataType: 'json',
+	                contentType: "application/json",
+	                error: function(XMLHttpRequest, textStatus, errorThrown){
+	                	if( XMLHttpRequest.status == '404'){
+	                        alert("404 Error collecting data.");
+	                    }
+	                	else{
+	                		alert('There was an ' + errorThrown +
+                                    ' error due to a ' + textStatus + 
+                                    ' condition: ' + XMLHttpRequest.status);
+	                	}
+	                },
+	                success: function(data) {
+	                	clearForm();
+	                	var select = document.getElementById("listVersionOf");
+	                	
+	                	select.options[0] = new Option("Select Identifier", "SELECT");
+	                    for(i in data.resourceNames){
+	                    	select.options[select.options.length] = new Option(data.resourceNames[i], data.resourceNames[i]);
+	                    }
+	                }
+	            });
+        	}
+        }
+        
+        // Called when "Version Of" list is changed
+        function loadVersionIds() {
+        	var type = $('#listResourceType').val();
+        	clearURIMapDetails();
+        	if(type == "CODE_SYSTEM") {
+	            $.ajax({
+	                type: "GET",
+	                url: serviceUrl + "all/" + $('#listResourceType').val() + "/" + $('#listVersionOf').val(),
+	                dataType: 'json',
+	                contentType: "application/json",
+	                error: function(XMLHttpRequest, textStatus, errorThrown){
+	                    if( XMLHttpRequest.status == '404'){
+	                        alert("Error collecting data.");
+	                    }
+	                	else{
+	                		alert('There was an ' + errorThrown +
+                                    ' error due to a ' + textStatus + 
+                                    ' condition: ' + XMLHttpRequest.status);
+	                	}
+
+	                },
+	                success: function(data) {
+	                	var select = document.getElementById("listVersionID");
+	                	select.options.length=0;
+	                	document.getElementById("listVersionID").style.visibility='visible';
+	                	select.options[0] = new Option("Select Version", "SELECT");
+	                    for(i in data.versionIds){
+	                    	select.options[select.options.length] = new Option(data.versionIds[i], data.versionIds[i]);
+	                    }
+	                }
+	            });
+        	}
+        	else{
+            	var select = document.getElementById("listVersionID");
+            	select.options.length=0;
+            	document.getElementById("listVersionID").style.visibility='hidden';
+        		loadVersionIdentifiers();
+        	}
+        }
+        
+        function loadVersionIdentifiers(){
+            $.ajax({
+                type: "GET",
+                url: serviceUrl + "versions/" + $('#listResourceType').val() + "/" + 
+                    $('#listVersionOf').val(),
+                dataType: 'json',
+                contentType: "application/json",
+                error: function(XMLHttpRequest, textStatus, errorThrown){
+                    if( XMLHttpRequest.status == '404'){
+                        alert("No URI Map with identifier " + $('#listVersionID').val() + " was found.");
+                    }
+                	else{
+                		alert('There was an ' + errorThrown +
+                                ' error due to a ' + textStatus + 
+                                ' condition: ' + XMLHttpRequest.status);
+                	}
+                },
+                success: function(data) {
+                    setIds(data);
+                }
+            });
+        }
+
+        // Called when "Version ID" list is changed
+        function loadIdentifiers(){
+        	var type = $('#listResourceType').val();
+        	var id = escape($('#listVersionOf').val());
+        	var vID = escape($('#listVersionID').val());
+        	var restURL = serviceUrl + "version/" + type + "/" + id + "/" + vID;
+        	
+            $.ajax({
+                type: "GET",
+                url: restURL,
+                dataType: 'json',
+                contentType: "application/json",
+                error: function(XMLHttpRequest, textStatus, errorThrown){
+                    if( XMLHttpRequest.status == '404'){
+                        alert("No URI Map with identifier " + vID + " was found.");
+                    }
+                	else{
+                		alert('There was an ' + errorThrown +
+                                ' error due to a ' + textStatus + 
+                                ' condition: ' + XMLHttpRequest.status);
+                	}
+                },
+                success: function(data) {
+                    setIds(data);
+                }
+            });
+        }
+
         function setIds(data) {
             $.ajax({
                 type: "GET",
@@ -39,10 +168,10 @@
                 dataType: 'json',
                 contentType: "application/json",
                 success: function(data) {
-                    $('#resourceType').val(data.resourceType);
-                    $('#resourceName').val(data.resourceName);
-                    $('#resourceUri').val(data.resourceURI);
-                    $('#versionOf').val(data.versionOf);
+                    $('#inputUriMapResourceType').val(data.resourceType);
+                    $('#inputUriMapVersionName').val(data.resourceName);
+                    $('#inputUriMapVersionUri').val(data.resourceURI);
+                    $('#inputUriMapVersionOf').val(data.versionOf);
 
                     
                     $('#identifiers').empty();
@@ -68,132 +197,9 @@
             });
         }
         
-        function loadVersionOf() {
-        	if(document.getElementById("resourceTypeLoad").selectedIndex == 0) {
-        		clearForm();
-        	}
-        	else{
-            	var type = $('#resourceTypeLoad').val();
-            	var restURL = serviceUrl + "all/" + type;
-	            $.ajax({
-	                type: "GET",
-	                url: restURL,
-	                dataType: 'json',
-	                contentType: "application/json",
-	                error: function(XMLHttpRequest, textStatus, errorThrown){
-	                	if( XMLHttpRequest.status == '404'){
-	                        alert("404 Error collecting data.");
-	                    }
-	                	else{
-	                		alert('There was an ' + errorThrown +
-                                    ' error due to a ' + textStatus + 
-                                    ' condition: ' + XMLHttpRequest.status);
-	                	}
-	                },
-	                success: function(data) {
-	                	clearForm();
-	                	var select = document.getElementById("identifierLoad");
-	                	
-	                	select.options[0] = new Option("Select Identifier", "SELECT");
-	                    for(i in data.resourceNames){
-	                    	select.options[select.options.length] = new Option(data.resourceNames[i], data.resourceNames[i]);
-	                    }
-	                }
-	            });
-        	}
-        }
-        
-        function loadVersionIds() {
-        	var type = $('#resourceTypeLoad').val();
-        	if(type == "CODE_SYSTEM") {
-	            $.ajax({
-	                type: "GET",
-	                url: serviceUrl + "all/" + $('#resourceTypeLoad').val() + "/" + $('#identifierLoad').val(),
-	                dataType: 'json',
-	                contentType: "application/json",
-	                error: function(XMLHttpRequest, textStatus, errorThrown){
-	                    if( XMLHttpRequest.status == '404'){
-	                        alert("Error collecting data.");
-	                    }
-	                	else{
-	                		alert('There was an ' + errorThrown +
-                                    ' error due to a ' + textStatus + 
-                                    ' condition: ' + XMLHttpRequest.status);
-	                	}
-
-	                },
-	                success: function(data) {
-	                	var select = document.getElementById("versionIdentifierLoad");
-	                	select.options.length=0;
-	                	document.getElementById("versionIdentifierLoad").style.visibility='visible';
-	                	select.options[0] = new Option("Select Version", "SELECT");
-	                    for(i in data.versionIds){
-	                    	select.options[select.options.length] = new Option(data.versionIds[i], data.versionIds[i]);
-	                    }
-	                }
-	            });
-        	}
-        	else{
-            	var select = document.getElementById("versionIdentifierLoad");
-            	select.options.length=0;
-            	document.getElementById("versionIdentifierLoad").style.visibility='hidden';
-        		loadVersionIdentifiers();
-        	}
-        }
-        
-        function loadIdentifiers(){
-        	var type = $('#resourceTypeLoad').val();
-        	var id = escape($('#identifierLoad').val());
-        	var vID = escape($('#versionIdentifierLoad').val());
-        	var restURL = serviceUrl + "version/" + type + "/" + id + "/" + vID;
-        	
-            $.ajax({
-                type: "GET",
-                url: restURL,
-                dataType: 'json',
-                contentType: "application/json",
-                error: function(XMLHttpRequest, textStatus, errorThrown){
-                    if( XMLHttpRequest.status == '404'){
-                        alert("No URI Map with identifier " + vID + " was found.");
-                    }
-                	else{
-                		alert('There was an ' + errorThrown +
-                                ' error due to a ' + textStatus + 
-                                ' condition: ' + XMLHttpRequest.status);
-                	}
-                },
-                success: function(data) {
-                    setIds(data);
-                }
-            });
-        }
-
-        function loadVersionIdentifiers(){
-            $.ajax({
-                type: "GET",
-                url: serviceUrl + "versions/" + $('#resourceTypeLoad').val() + "/" + 
-                    $('#identifierLoad').val(),
-                dataType: 'json',
-                contentType: "application/json",
-                error: function(XMLHttpRequest, textStatus, errorThrown){
-                    if( XMLHttpRequest.status == '404'){
-                        alert("No URI Map with identifier " + $('#versionIdentifierLoad').val() + " was found.");
-                    }
-                	else{
-                		alert('There was an ' + errorThrown +
-                                ' error due to a ' + textStatus + 
-                                ' condition: ' + XMLHttpRequest.status);
-                	}
-                },
-                success: function(data) {
-                    setIds(data);
-                }
-            });
-        }
-
         $(document).ready(function() {
 	
-            $('#btnAdd').click(function() {
+            $('#btnAddIdentifier').click(function() {
                 addIdentifier();
 
                 return false;
@@ -206,10 +212,10 @@
 
             $('#btnSave').click(function() {
                 var json = {
-                    resourceType : $('#resourceType').val(),
-                    resourceName : $('#resourceName').val(),
-                    resourceURI : $('#resourceUri').val(),
-                    versionOf : $('#versionOf').val(),
+                    resourceType : $('#inputUriMapResourceType').val(),
+                    resourceName : $('#inputUriMapVersionName').val(),
+                    resourceURI : $('#inputUriMapVersionUri').val(),
+                    versionOf : $('#inputUriMapVersionOf').val(),
                     identifiers : []
                 };
 
@@ -223,7 +229,7 @@
                 $.ajax({
                     type: "PUT",
                     url: serviceUrl + "versions/" + json.resourceType + "/" + json.resourceName,
-                    dataType: 'json',
+                   // dataType: 'json',
                     contentType: "application/json",
                     data: JSON.stringify(json),
                     success: function(data) {
@@ -247,7 +253,7 @@
     <fieldset style="float:none !important">
         <legend>Load a Version Map</legend>
         <label>Resource Type: </label>
-                        <select name="resourceTypeLoad" id="resourceTypeLoad" onchange="return loadVersionOf();" >
+                        <select name="listResourceType" id="listResourceType" onchange="return loadVersionOf();" >
                         	<option value="SELECT_OPTION">Select Resource Type</option>
                             <option value="CODE_SYSTEM">CODE_SYSTEM</option>
                             <option value="CODE_SYSTEM_VERSION">CODE_SYSTEM_VERSION</option>
@@ -255,11 +261,11 @@
                         </select>
         <br/>
         <label>Version Of: </label>
-        				<select name="identifierLoad" id="identifierLoad"  onchange="return loadVersionIds();">
+        				<select name="listVersionOf" id="listVersionOf"  onchange="return loadVersionIds();">
         				</select>
         <br/>
         <label>Version ID: </label>
-        			 	<select name="versionIdentifierLoad" id="versionIdentifierLoad" onchange="return loadIdentifiers();">
+        			 	<select name="listVersionID" id="listVersionID" onchange="return loadIdentifiers();">
         			 	</select>
         <br/>
         <br/>
@@ -267,24 +273,24 @@
 
     <fieldset>
         <legend>URI Map Details</legend>
-    <label>Version Name: </label><input type="text" name="resourceName" id="resourceName" />
+    <label>Version Name: </label><input type="text" name="inputUriMapVersionName" id="inputUriMapVersionName" />
     <br/>
-    <label>Version URI: </label><input type="text" name="resourceUri" id="resourceUri" />
+    <label>Version URI: </label><input type="text" name="inputUriMapVersionUri" id="inputUriMapVersionUri" />
     <br/>
     <label>Resource Type: </label>
-                    <select name="resourceType" id="resourceType" >
+                    <select name="inputUriMapResourceType" id="inputUriMapResourceType" >
                       <option value="CODE_SYSTEM_VERSION">CODE_SYSTEM_VERSION</option>
                       <option value="MAP_VERSION">MAP_VERSION</option>
                     </select>
     <br/>
-    <label>Version Of: </label><input type="text" name="versionOf" id="versionOf" />
+    <label>Version Of: </label><input type="text" name="inputUriMapVersionOf" id="inputUriMapVersionOf" />
 
-    </fieldset>
+		</fieldset>
 
     <br/>
     <fieldset style="float:none !important">
         <div id="identifiers" ></div>
-        <button id="btnAdd" class="button" value="Add Identifier">Add Identifier</button>
+        <button id="btnAddIdentifier" class="button" value="Add Identifier">Add Identifier</button>
     </fieldset>
      
             

@@ -3,6 +3,9 @@ package edu.mayo.cts2.uriresolver.controller;
 
 import static edu.mayo.cts2.uriresolver.constants.UriResolverConstants.PRINT;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,13 +29,15 @@ public class ResolveURI {
 	private static final String VERSIONID = "versionID";
 	
 	@RequestMapping(method=RequestMethod.PUT, value="/versions/{type}/{identifier}")
-	public void saveVersionIdentifiers(@RequestBody UriResults uriResults, @PathVariable String type, @PathVariable String identifier){
+	public ResponseEntity<String> saveVersionIdentifiers(@RequestBody UriResults uriResults, @PathVariable String type, @PathVariable String identifier){
 		uriDAO.saveVersionIdentifiers(uriResults);
+		return new ResponseEntity<String>(new HttpHeaders(), HttpStatus.OK);
 	}
 	
 	@RequestMapping(method=RequestMethod.PUT, value="/ids/{type}/{identifier}")
-	public void saveIdentifiers(@RequestBody UriResults uriResults, @PathVariable String type, @PathVariable String identifier){
+	public ResponseEntity<String> saveIdentifiers(@RequestBody UriResults uriResults, @PathVariable String type, @PathVariable String identifier){
 		uriDAO.saveIdentifiers(uriResults);
+		return new ResponseEntity<String>(new HttpHeaders(), HttpStatus.OK);
 	}
 
 	@RequestMapping(method=RequestMethod.GET, value="/all/{type}")  

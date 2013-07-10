@@ -65,7 +65,7 @@ public class URI_ResolverTest {
 			null,
 			null,
 			{"AI/RHEUM","AIR","http://id.nlm.nih.gov/cui/C1140091"},
-			null
+			{"1993","AIR93"}
 		};
 		
 //		{"resourceType":"CODE_SYSTEM","resourceName":"rdf","resourceURI":"http://www.w3.org/1999/02/22-rdf-syntax-ns#","baseEntityURI":"http://www.w3.org/1999/02/22-rdf-syntax-ns#"}

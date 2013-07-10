@@ -15,39 +15,12 @@
         base-package="edu.mayo.cts2.uriresolver" />
 	<tx:annotation-driven />
 	
- 	<!-- 
-   	<mvc:annotation-driven /> 
-	<tx:annotation-driven />
-
- 		<bean class="edu.mayo.cts2.framework.webapp.rest.osgi.OsgiAnnotationHandlerMapping">
-			<property name="order" value="0" />
-			<property name="urlDecode" value="false" />
-			<property name="useDefaultSuffixPattern" value="false" />
-		</bean>
- 	
- 		<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
-			<property name="useSuffixPatternMatch" value="false"></property>
-		</bean>
-		
-	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
-		<property name="order" value="0" />
-      	<property name="useDefaultSuffixPattern" value="false" />
-   	</bean>
-		
+	<!-- Following is required to allow JSON/SPRING to not interpret ".<value>" as a file extension -->
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
       	<property name="useDefaultSuffixPattern" value="false" />
    	</bean>
  	
-	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
-		<property name="order" value="0" />
-		<property name="urlDecoder" value="false" />
-      	<property name="useDefaultSuffixPattern" value="false" />
-   	</bean>
-	 -->
-	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
-      	<property name="useDefaultSuffixPattern" value="false" />
-   	</bean>
- 	
+ 	<!-- Also need the following for the JSON/SPRING file extension with Jackson -->
 	<bean
 		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
 		<property name="messageConverters" ref="messageConverters" />
@@ -67,7 +40,7 @@
 			class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
 	</util:list>
 
-
+	<!-- Basic spring code -->
     <bean id="viewResolver"
         class="org.springframework.web.servlet.view.UrlBasedViewResolver">
         <property name="viewClass"
