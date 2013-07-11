@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
                     "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -17,25 +18,67 @@
             });        	
         }
         
-        function clearForm() {
-        	clearURIMapDetails();
-            $('#identifiers').empty();
+        function clearIdentifiers(){
+        	$('#identifiers').empty();
+        }
+        
+        function clearVersionLists(){
             document.getElementById("listVersionOf").options.length = 0;
+        	clearVersionIDList();
+        }
+
+        function clearVersionIDList(){
         	document.getElementById("listVersionID").options.length = 0;
         	document.getElementById("listVersionID").style.visibility='visible';
         }
         
-        function clearAll() {
+        function clearForm() {
+        	clearVersionLists();
         	clearURIMapDetails();
-            $('#identifiers').empty();
+        	clearIdentifiers();
+        }
+        
+        function clearAll() {
+        	clearForm();
             document.getElementById("listResourceType").options[0].selected = true;
-            document.getElementById("listVersionOf").options.length = 0;
-        	document.getElementById("listVersionID").options.length = 0;
-        	document.getElementById("listVersionID").style.visibility='visible';
+        }
+
+        function resetList(selectList, value){
+        	for(var waiting=0; waiting < 2000; waiting++){
+        		if(selectList.options.length > 0){
+                	for(var i=0; i < selectList.options.length; i++){
+                		if(selectList.options[i].value == value){
+                			selectList.options[i].selected = true;
+                			selectList.onchange();
+                			break;
+                		}
+                	}
+                	break;
+        		}
+        		else{
+        			setTimeout(function(){}, 100);
+        		}
+        	}
+        }
+        
+        function resetForm() {
+        	var selectResourceTypes = document.getElementById("listResourceType");
+        	var selectVersionOf = document.getElementById("listVersionOf");
+        	var selectVersionID = document.getElementById("listVersionID");
+        	
+        	var resourceTypeVal = selectResourceTypes[selectResourceTypes.selectedIndex].value;        	
+            var versionOfVal = selectVersionOf[selectVersionOf.selectedIndex].value;
+        	var versionIDVal = selectVersionID[selectVersionID.selectedIndex].value;
+  	
+        	clearAll();
+        	resetList(selectResourceTypes, resourceTypeVal);
+        	setTimeout(function(){resetList(selectVersionOf, versionOfVal);}, 500);
+        	setTimeout(function(){resetList(selectVersionID, versionIDVal);}, 1000);
         }
         
         // Called when "Resource Type" list is changed
         function loadVersionOf() {
+        	clearForm();
         	if(document.getElementById("listResourceType").selectedIndex == 0) {
         		clearForm();
         	}
@@ -58,7 +101,6 @@
 	                	}
 	                },
 	                success: function(data) {
-	                	clearForm();
 	                	var select = document.getElementById("listVersionOf");
 	                	
 	                	select.options[0] = new Option("Select Identifier", "SELECT");
@@ -92,9 +134,8 @@
 
 	                },
 	                success: function(data) {
+	                	clearVersionIDList();
 	                	var select = document.getElementById("listVersionID");
-	                	select.options.length=0;
-	                	document.getElementById("listVersionID").style.visibility='visible';
 	                	select.options[0] = new Option("Select Version", "SELECT");
 	                    for(i in data.versionIds){
 	                    	select.options[select.options.length] = new Option(data.versionIds[i], data.versionIds[i]);
@@ -103,8 +144,7 @@
 	            });
         	}
         	else{
-            	var select = document.getElementById("listVersionID");
-            	select.options.length=0;
+            	clearVersionIDList();
             	document.getElementById("listVersionID").style.visibility='hidden';
         		loadVersionIdentifiers();
         	}
@@ -173,8 +213,7 @@
                     $('#inputUriMapVersionUri').val(data.resourceURI);
                     $('#inputUriMapVersionOf').val(data.versionOf);
 
-                    
-                    $('#identifiers').empty();
+					clearIdentifiers();                    
                     for(i in data.identifiers){
                         addIdentifier(data.identifiers[i]);
                     }
@@ -197,21 +236,8 @@
             });
         }
         
-        $(document).ready(function() {
-	
-            $('#btnAddIdentifier').click(function() {
-                addIdentifier();
-
-                return false;
-            });
- 
-            $('#btnClearAll').click(function() {
-            	clearAll();
-                return false;
-            });
-
-            $('#btnSave').click(function() {
-                var json = {
+        function createAndSendJSON(){
+            var json = {
                     resourceType : $('#inputUriMapResourceType').val(),
                     resourceName : $('#inputUriMapVersionName').val(),
                     resourceURI : $('#inputUriMapVersionUri').val(),
@@ -234,12 +260,35 @@
                     data: JSON.stringify(json),
                     success: function(data) {
                         alert("Saved");
+                        resetForm();
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         alert("ERROR: " + jqXHR.responseText);
                     }
                 });
+        }
+        
+        $(document).ready(function() {
+	
+            $('#btnAddIdentifier').click(function() {
+                addIdentifier();
 
+                return false;
+            });
+ 
+            $('#btnClearAll').click(function() {
+            	clearAll();
+                return false;
+            });
+
+            $('#btnSave').click(function() {
+            	if($('#inputUriMapVersionName').val() == ""){
+            		alert("Nothing to save. Please select a map using option lists above.");
+            	}
+            	else {
+            		createAndSendJSON();
+            	}
+                
                 return false;
             }); 
             
@@ -273,15 +322,15 @@
 
     <fieldset>
         <legend>URI Map Details</legend>
-    <label>Version Name: </label><input type="text" name="inputUriMapVersionName" id="inputUriMapVersionName" />
-    <br/>
-    <label>Version URI: </label><input type="text" name="inputUriMapVersionUri" id="inputUriMapVersionUri" />
-    <br/>
     <label>Resource Type: </label>
                     <select name="inputUriMapResourceType" id="inputUriMapResourceType" >
                       <option value="CODE_SYSTEM_VERSION">CODE_SYSTEM_VERSION</option>
                       <option value="MAP_VERSION">MAP_VERSION</option>
                     </select>
+    <br/>
+    <label>Version Name: </label><input type="text" name="inputUriMapVersionName" id="inputUriMapVersionName" />
+    <br/>
+    <label>Version URI: </label><input type="text" name="inputUriMapVersionUri" id="inputUriMapVersionUri" />
     <br/>
     <label>Version Of: </label><input type="text" name="inputUriMapVersionOf" id="inputUriMapVersionOf" />
 
@@ -308,6 +357,8 @@
             <button value="Remove Identifier" class="btnDel button">Remove Identifier</button>
         </div>
     </div>
+	<br/><br/>    
+	<a href="<c:url value="j_spring_security_logout" />" > Logout</a>
 
 </body>
 </html>

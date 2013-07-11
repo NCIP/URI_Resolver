@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html>
 <head>
 <title>CTS2 URI Resolver</title>
@@ -29,12 +30,9 @@
         <a href="versions/CODE_SYSTEM_VERSION/ICD9CM_2012">Click here to See allVersionIdentfiersOfAVersion...(versions/CODE_SYSTEM_VERSION/ICD9CM_2012)</a>
         </h2>
     </div>
-    <div align='center'>
-        <h2>Admin Pages <br> <br> 
-                <a href="id_admin.jsp">Click here administer ID Data...</a><br>
-                <a href="version_admin.jsp">Click here administer Version Data...</a>
-        </h2>
-    </div>
+    
+    <br/><br/>    
+	<a href="<c:url value="j_spring_security_logout" />" > Logout</a>
     
 </body>
 </html>
