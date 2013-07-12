@@ -1,42 +1,91 @@
 package edu.mayo.cts2.uriresolver.controller;
 
 import java.security.Principal;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
  
 @Controller
 public class LoginController {
  
-	@RequestMapping(value="/admin", method = RequestMethod.GET)
-	public String printWelcome(ModelMap model, Principal principal ) {
-		System.out.println("printWelcome");
-		return "edit";
- 
-	}
- 
+	@RequestMapping(value="/", method = RequestMethod.GET)
+	public String homePageTop(ModelMap model, Principal principal ) {
+		System.out.println("homePageTop");
+		return "public/login";
+ 	}
+	
 	@RequestMapping(value="/index", method = RequestMethod.GET)
-	public String login(ModelMap model) {
-		System.out.println("login");
-		return "login";
-	}
+	public ModelAndView homePageIndex(ModelMap model, Principal principal ) {
+		System.out.println("homePageIndex");
+		return new ModelAndView("redirect:/");
+ 	}
+//
+//	@RequestMapping(value="/home*", method = RequestMethod.GET)
+//	public String homePageHome(ModelMap model, Principal principal ) {
+//		System.out.println("homePageHome");
+//		return "login";
+// 	}
+
+	@RequestMapping(value="/admin_pages/authenticated", method = RequestMethod.GET)
+	public String authenticated(ModelMap model, Principal principal ) {
+		System.out.println("authenticated");
+		return "admin_pages/edit";
+ 	}
+
+	@RequestMapping(value="/admin_pages/versionEdit", method = RequestMethod.GET)
+	public String versionEdit(ModelMap model, Principal principal ) {
+		System.out.println("versionEdit");
+		return "admin_pages/admin_version";
+ 	}
+
+	@RequestMapping(value="/admin_pages/identifierEdit", method = RequestMethod.GET)
+	public String identifierEdit(ModelMap model, Principal principal ) {
+		System.out.println("identifierEdit");
+		return "admin_pages/admin_id";
+ 	}
  
-	@RequestMapping(value="/loginfailed", method = RequestMethod.GET)
-	public String loginerror(ModelMap model) {
+	@RequestMapping(value="/public/loginPage", method = RequestMethod.GET)
+	public ModelAndView login(ModelMap model) {
+		System.out.println("login");
+ 
+		return new ModelAndView("redirect:/");
+	}
+
+	@RequestMapping(value="/public/loginfailed", method = RequestMethod.GET)
+	public ModelAndView loginfailed(ModelMap model) {
 		System.out.println("loginfailed");
  
 		model.addAttribute("error", "true");
-		return "login";
+		return new ModelAndView("redirect:/");
+//		return "public/login";
  
 	}
  
-	@RequestMapping(value="/logout", method = RequestMethod.GET)
-	public String logout(ModelMap model) {
+	@RequestMapping(value="/public/examples", method = RequestMethod.GET)
+	public String examples(ModelMap model) {
+		System.out.println("examples");
+ 
+		return "public/demoPage";
+	}
+
+	@RequestMapping(value="/public/logout", method = RequestMethod.GET)
+	public ModelAndView logout(ModelMap model) {
 		System.out.println("logout");
 
-		return "login";
+		return new ModelAndView("redirect:/");
+//		return "public/login";
  
 	}
+	
+	@RequestMapping(value="/public/accessDenied", method = RequestMethod.GET)
+	public ModelAndView accessDenied(ModelMap model) {
+		System.out.println("accessDenied");
+
+		return new ModelAndView("redirect:/");
+//		return "public/expired";
  
-}
+	}
+ }

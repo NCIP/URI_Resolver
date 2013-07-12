@@ -12,7 +12,7 @@
 
         var oldResourceName = null;
 
-        var serviceUrl = "";
+        var serviceUrl = "../";
 
 
         function clearURIMapDetails() {
@@ -288,7 +288,7 @@
         </div>
     </div>
 	<br/><br/>    
-	<a href="<c:url value="j_spring_security_logout" />" > Logout</a>
-
+	<c:url value="/j_spring_security_logout" var="logoutUrl" />
+	<a href="${logoutUrl}">Log Out</a>
 </body>
 </html>

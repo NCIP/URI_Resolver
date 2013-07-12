@@ -12,11 +12,15 @@
 }
 </style>
 </head>
+<c:url value="/j_spring_security_logout" var="logoutUrl" />
 <body onload='document.f.j_username.focus();'>
 	<h2>Welcome to the CTS2 URI Resolver REST Interface</h2>
+<br/>
 
+	<a href="admin_pages/identifierEdit">test access</a>
+	<br/>
 	<h3>View example queries:</h3>
-	<a href="examples.jsp">examples.jsp</a>
+	<a href="public/examples">examples</a>
 	
 	<br/>
 	<br/>
@@ -57,9 +61,8 @@
 	</form>
 	
 	<br/><br/>    
-	<a href="<c:url value="j_spring_security_logout" />" > Logout</a>
-    
-	
+	<c:url value="/j_spring_security_logout" var="logoutUrl" />
+	<a href="${logoutUrl}">Log Out</a>
 	
 	
 </body>
