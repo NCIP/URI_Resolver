@@ -39,10 +39,7 @@
  
 	<authentication-manager>
 	  <authentication-provider>
-		<user-service>
-			<!-- <user name="cts2" password="71c75a384bae1e8459d7cf167ceb97b14d32ad85" authorities="ROLE_USER" /> -->
-			<user name="f" password="f" authorities="ROLE_USER" />
-		</user-service>
+		<user-service id="userDetailsService" properties="users.properties" />
 	  </authentication-provider>
 	</authentication-manager>
 

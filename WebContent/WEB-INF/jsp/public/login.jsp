@@ -16,14 +16,6 @@
 <body onload='document.f.j_username.focus();'>
 	<h2>Welcome to the CTS2 URI Resolver REST Interface</h2>
 <br/>
-
-	<a href="admin_pages/identifierEdit">test access</a>
-	<br/>
-	<h3>View example queries:</h3>
-	<a href="public/examples">examples</a>
-	
-	<br/>
-	<br/>
 	<h3>To edit the database you must log in: </h3>
 	
 	<c:if test="${not empty error}">
@@ -32,6 +24,7 @@
 			${sessionScope["SPRING_SECURITY_LAST_EXCEPTION"].message}
 		</div>
 	</c:if>
+
  
 	<form name='f' action="<c:url value='j_spring_security_check' />"
 		method='POST'>
@@ -60,6 +53,11 @@
  
 	</form>
 	
+	<h3><a href="public/examples">Example Public Queries</a></h3>
+	
+	<br/>
+	<br/>
+
 	<br/><br/>    
 	<c:url value="/j_spring_security_logout" var="logoutUrl" />
 	<a href="${logoutUrl}">Log Out</a>

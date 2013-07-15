@@ -6,8 +6,8 @@
 <body>
     <div align='center'>
         <h2>Admin Pages <br> <br> 
-                <a href="identifierEdit">Click here administer ID Data...</a><br>
-                <a href="versionEdit">Click here administer Version Data...</a>
+                <a href="identifierEdit">Edit Identifier ID Data</a><br>
+                <a href="versionEdit">Edit Version Data</a>
         </h2>
     </div>
 

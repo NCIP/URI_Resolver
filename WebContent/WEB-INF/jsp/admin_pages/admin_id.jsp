@@ -40,38 +40,22 @@
             document.getElementById("listResourceType").options[0].selected = true;
         }
 
-        function resetList(selectList, value){
-        	for(var waiting=0; waiting < 2000; waiting++){
-        		if(selectList.options.length > 0){
-                	for(var i=0; i < selectList.options.length; i++){
-                		if(selectList.options[i].value == value){
-                			selectList.options[i].selected = true;
-                			selectList.onchange();
-                			break;
-                		}
-                	}
-                	break;
-        		}
-        		else{
-        			setTimeout(function(){}, 100);
-        		}
-        	}
-        }
-        
         function resetForm() {
         	var selectResourceTypes = document.getElementById("listResourceType");
         	var selectMapIdentifiers = document.getElementById("listURIMapIdentifiers");
         	
-        	var resourceTypeVal = selectResourceTypes[selectResourceTypes.selectedIndex].value;        	
+        	var resourceIndex = selectResourceTypes.selectedIndex;        	
+        	
             var mapIdentifiersVal = selectMapIdentifiers[selectMapIdentifiers.selectedIndex].value;
 
             clearAll();
-          	resetList(selectResourceTypes, resourceTypeVal);
-          	setTimeout(function(){resetList(selectMapIdentifiers, mapIdentifiersVal);}, 500);
+            
+        	selectResourceTypes[resourceIndex].selected = true;
+        	loadURIMapIdentifiers(mapIdentifiersVal);            
         }
         
         // Called when "Resource Type" list is changed
-	    function loadURIMapIdentifiers(){
+	    function loadURIMapIdentifiers(mapId){
         	clearForm();
         	if(document.getElementById("listResourceType").selectedIndex == 0) {
         		clearForm();
@@ -100,6 +84,10 @@
 	                	select.options[0] = new Option("Select Identifier", "SELECT");
 	                    for(i in data.resourceNames){
 	                    	select.options[select.options.length] = new Option(data.resourceNames[i], data.resourceNames[i]);
+	                    	if(select.options[i].value == mapId){
+	                  			select.options[i].selected = true;
+	                  			loadIdentifiers();
+	                    	}
 	                    }
 	                }
 	            });
@@ -240,7 +228,6 @@
                         <select name="listResourceType" id="listResourceType" onchange="return loadURIMapIdentifiers();" >
                             <option value="SELECT_OPTION">Select Resource Type</option>
                             <option value="CODE_SYSTEM">CODE_SYSTEM</option>
-                            <option value="CODE_SYSTEM_VERSION">CODE_SYSTEM_VERSION</option>
                             <option value="VALUE_SET">VALUE_SET</option>
                         </select>
         <br/>
@@ -287,7 +274,8 @@
             <button value="Remove Identifier" class="btnDel button">Remove Identifier</button>
         </div>
     </div>
-	<br/><br/>    
+	<br/><br/>
+    <h4><a href="versionEdit">Edit Version Data</a></h4> 
 	<c:url value="/j_spring_security_logout" var="logoutUrl" />
 	<a href="${logoutUrl}">Log Out</a>
 </body>

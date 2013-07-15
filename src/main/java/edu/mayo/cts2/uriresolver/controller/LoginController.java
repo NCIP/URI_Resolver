@@ -22,12 +22,6 @@ public class LoginController {
 		System.out.println("homePageIndex");
 		return new ModelAndView("redirect:/");
  	}
-//
-//	@RequestMapping(value="/home*", method = RequestMethod.GET)
-//	public String homePageHome(ModelMap model, Principal principal ) {
-//		System.out.println("homePageHome");
-//		return "login";
-// 	}
 
 	@RequestMapping(value="/admin_pages/authenticated", method = RequestMethod.GET)
 	public String authenticated(ModelMap model, Principal principal ) {
@@ -60,8 +54,6 @@ public class LoginController {
  
 		model.addAttribute("error", "true");
 		return new ModelAndView("redirect:/");
-//		return "public/login";
- 
 	}
  
 	@RequestMapping(value="/public/examples", method = RequestMethod.GET)
@@ -76,8 +68,6 @@ public class LoginController {
 		System.out.println("logout");
 
 		return new ModelAndView("redirect:/");
-//		return "public/login";
- 
 	}
 	
 	@RequestMapping(value="/public/accessDenied", method = RequestMethod.GET)
@@ -85,7 +75,5 @@ public class LoginController {
 		System.out.println("accessDenied");
 
 		return new ModelAndView("redirect:/");
-//		return "public/expired";
- 
 	}
  }

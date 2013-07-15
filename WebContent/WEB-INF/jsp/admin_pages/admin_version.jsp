@@ -43,41 +43,24 @@
             document.getElementById("listResourceType").options[0].selected = true;
         }
 
-        function resetList(selectList, value){
-        	for(var waiting=0; waiting < 2000; waiting++){
-        		if(selectList.options.length > 0){
-                	for(var i=0; i < selectList.options.length; i++){
-                		if(selectList.options[i].value == value){
-                			selectList.options[i].selected = true;
-                			selectList.onchange();
-                			break;
-                		}
-                	}
-                	break;
-        		}
-        		else{
-        			setTimeout(function(){}, 100);
-        		}
-        	}
-        }
-        
         function resetForm() {
         	var selectResourceTypes = document.getElementById("listResourceType");
         	var selectVersionOf = document.getElementById("listVersionOf");
         	var selectVersionID = document.getElementById("listVersionID");
         	
-        	var resourceTypeVal = selectResourceTypes[selectResourceTypes.selectedIndex].value;        	
+        	var resourceIndex = selectResourceTypes.selectedIndex;        	
+        	
             var versionOfVal = selectVersionOf[selectVersionOf.selectedIndex].value;
         	var versionIDVal = selectVersionID[selectVersionID.selectedIndex].value;
   	
         	clearAll();
-        	resetList(selectResourceTypes, resourceTypeVal);
-        	setTimeout(function(){resetList(selectVersionOf, versionOfVal);}, 500);
-        	setTimeout(function(){resetList(selectVersionID, versionIDVal);}, 1000);
+
+        	selectResourceTypes[resourceIndex].selected = true;
+        	loadVersionOf(versionOfVal, versionIDVal);
         }
         
         // Called when "Resource Type" list is changed
-        function loadVersionOf() {
+        function loadVersionOf(versionOf, versionId) {
         	clearForm();
         	if(document.getElementById("listResourceType").selectedIndex == 0) {
         		clearForm();
@@ -106,6 +89,10 @@
 	                	select.options[0] = new Option("Select Identifier", "SELECT");
 	                    for(i in data.resourceNames){
 	                    	select.options[select.options.length] = new Option(data.resourceNames[i], data.resourceNames[i]);
+	                    	if(select.options[i].value == versionOf){
+	                  			select.options[i].selected = true;
+	                  			loadVersionIds(versionId);
+	                    	}
 	                    }
 	                }
 	            });
@@ -113,10 +100,11 @@
         }
         
         // Called when "Version Of" list is changed
-        function loadVersionIds() {
+        function loadVersionIds(versionId) {
         	var type = $('#listResourceType').val();
         	clearURIMapDetails();
         	if(type == "CODE_SYSTEM") {
+            	document.getElementById("listVersionID").style.visibility='visible';
 	            $.ajax({
 	                type: "GET",
 	                url: serviceUrl + "all/" + $('#listResourceType').val() + "/" + $('#listVersionOf').val(),
@@ -139,6 +127,10 @@
 	                	select.options[0] = new Option("Select Version", "SELECT");
 	                    for(i in data.versionIds){
 	                    	select.options[select.options.length] = new Option(data.versionIds[i], data.versionIds[i]);
+	                    	if(select.options[i].value == versionId){
+	                  			select.options[i].selected = true;
+	                  			loadIdentifiers();
+	                    	}
 	                    }
 	                }
 	            });
@@ -358,6 +350,7 @@
         </div>
     </div>
 	<br/><br/>    
+    <h4><a href="identifierEdit">Edit Identifier Data</a></h4> 
 	<c:url value="/j_spring_security_logout" var="logoutUrl" />
 	<a href="${logoutUrl}">Log Out</a>
 </body>
