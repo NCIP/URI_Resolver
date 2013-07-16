@@ -3,6 +3,7 @@ package edu.mayo.cts2.uriresolver.controller;
 
 import static edu.mayo.cts2.uriresolver.constants.UriResolverConstants.PRINT;
 
+import org.apache.log4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import edu.mayo.cts2.uriresolver.dao.UriDAO;
 
 @Controller
 public class ResolveURI {
+	private static Logger logger = Logger.getLogger(ResolveURI.class);
 	private UriDAO uriDAO;
 	private static final String TYPE="type";
 	private static final String IDENTIFIER="identifier";
@@ -44,15 +46,15 @@ public class ResolveURI {
 	@ResponseBody
 	public UriResourceNames getAllResourceNames(@PathVariable(TYPE) String type){
 		if(PRINT){
-			System.out.println("getAllResourceNames");
-			System.out.println("/all/" + type);
+			logger.info("getAllResourceNames");
+			logger.info("/all/" + type);
 		}
 		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
 		if(uriDAO != null){
 			UriResourceNames resourceNames = uriDAO.getAllResourceNames(type);
 			if(PRINT){
-				System.out.println("Size: " + resourceNames.getResourceNames().size());
+				logger.info("Size: " + resourceNames.getResourceNames().size());
 			}
 			return 	resourceNames;
 		} 
@@ -64,8 +66,8 @@ public class ResolveURI {
 	@ResponseBody
 	public UriVersionIds getAllVersionIds(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(PRINT){
-			System.out.println("getAllVersionIds");
-			System.out.println("/all/" + type + "/" + identifier);
+			logger.info("getAllVersionIds");
+			logger.info("/all/" + type + "/" + identifier);
 		}
 		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
@@ -73,7 +75,7 @@ public class ResolveURI {
 			UriVersionIds versionIDs = uriDAO.getAllVersionIds(type, identifier);
 			
 			if(PRINT){
-				System.out.println("Size: " + versionIDs.getVersionIds().size());
+				logger.info("Size: " + versionIDs.getVersionIds().size());
 			}
 			
 			return versionIDs;
@@ -92,8 +94,8 @@ public class ResolveURI {
 //	@ResponseBody
 	public ModelAndView uriMapById(@PathVariable(TYPE) String type, @RequestParam(value = "id") String id){
 		if(PRINT){
-			System.out.println("uriMapById");
-			System.out.println("/id/" + type + "?" + id);
+			logger.info("uriMapById");
+			logger.info("/id/" + type + "?" + id);
 		}
 		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
@@ -113,8 +115,8 @@ public class ResolveURI {
 	public ModelAndView uriMapByVersionID(@PathVariable(TYPE) String type, 
 			@PathVariable(IDENTIFIER) String identifier, @RequestParam(value = VERSIONID) String versionID){
 		if(PRINT){
-			System.out.println("uriMapByVersionID");
-			System.out.println("/version/" + type + "/" + identifier + "?" + versionID);
+			logger.info("uriMapByVersionID");
+			logger.info("/version/" + type + "/" + identifier + "?" + versionID);
 		}
 		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
@@ -134,15 +136,15 @@ public class ResolveURI {
 	public ModelAndView uriMapByVersionIdentifier(@PathVariable(TYPE) String type, 
 			@PathVariable(IDENTIFIER) String identifier, @PathVariable(VERSIONID) String versionID){
 		if(PRINT){
-			System.out.println("uriMapByVersionIdentifier");
-			System.out.println("/version/" + type + "/" + identifier + "/" + versionID);
+			logger.info("uriMapByVersionIdentifier");
+			logger.info("/version/" + type + "/" + identifier + "/" + versionID);
 		}
 		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
 		if(uriDAO != null){
 			String versionIdentifier = uriDAO.getVersionIdentifierByVersionID(type, identifier, versionID);
 			if(PRINT){
-				System.out.println("uriMapByVersionIdentifier: " + versionIdentifier);
+				logger.info("uriMapByVersionIdentifier: " + versionIdentifier);
 			}
 			return new ModelAndView("redirect:/versions/CODE_SYSTEM_VERSION/" + versionIdentifier);
 		} 
@@ -161,8 +163,8 @@ public class ResolveURI {
 	@ResponseBody
 	public UriResults uriMapByIdentifier(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(PRINT){
-			System.out.println("uriMapByIdentifier");
-			System.out.println("/id/" + type + "/" + identifier);
+			logger.info("uriMapByIdentifier");
+			logger.info("/id/" + type + "/" + identifier);
 		}
 		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
@@ -180,8 +182,8 @@ public class ResolveURI {
 	@ResponseBody
 	public UriResults allUriMapIdentities(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(PRINT){
-			System.out.println("allUriMapIdentities");
-			System.out.println("/ids/" + type + "/" + identifier);
+			logger.info("allUriMapIdentities");
+			logger.info("/ids/" + type + "/" + identifier);
 		}
 		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
@@ -200,8 +202,8 @@ public class ResolveURI {
 	@ResponseBody
 	public UriResults allUriMapVersionIdentifiers(@PathVariable(TYPE) String type, @PathVariable(IDENTIFIER) String identifier){
 		if(PRINT){
-			System.out.println("allUriMapVersionIdentifiers");
-			System.out.println("/versions/" + type + "/" + identifier);
+			logger.info("allUriMapVersionIdentifiers");
+			logger.info("/versions/" + type + "/" + identifier);
 		}
 		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);

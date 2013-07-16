@@ -2,6 +2,7 @@ package edu.mayo.cts2.uriresolver.beans;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
@@ -11,7 +12,7 @@ public class UriResults {
 	private String resourceURI;
 	private String baseEntityURI;
 	private String versionOf;
-	private List<String> identifiers;
+	private List<String> ids;
 	public String getResourceType() {
 		return resourceType;
 	}
@@ -27,8 +28,8 @@ public class UriResults {
 	public String getVersionOf() {
 		return versionOf;
 	}
-	public List<String> getIdentifiers() {
-		return identifiers;
+	public List<String> getIds() {
+		return ids;
 	}
 	public void setResourceType(String resourceType) {
 		this.resourceType = resourceType;
@@ -45,24 +46,29 @@ public class UriResults {
 	public void setVersionOf(String versionOf) {
 		this.versionOf = versionOf;
 	}
-	public void setIdentifiers(List<String> identifiers) {
-		this.identifiers = identifiers;
+	public void setIds(List<String> ids) {
+		this.ids = ids;
 	}
 
-	public void print(){
+	public void logObjectData(Logger logger){
 		String baseEntityURI = getBaseEntityURI();
-		List<String> identifiers = getIdentifiers();
+		List<String> identifierList = getIds();
 		String resourceName = getResourceName();
 		String resourceType = getResourceType();
 		String resourceURI = getResourceURI();
 		String versionOf = getVersionOf();
+		String ids = "";
+		String seperator = "";
 		
-		System.out.println(baseEntityURI + ", " + resourceName + ", " + resourceType + ", " + resourceURI + ", " + versionOf);
-		if(identifiers != null){
-			for(String id : identifiers){
-				System.out.println(id);
+		if(identifierList != null){
+			ids = ", [";
+			for(String id : identifierList){
+				ids += seperator + id;
+				seperator = ", ";
 			}
 		}
+		
+		logger.info(baseEntityURI + ", " + resourceName + ", " + resourceType + ", " + resourceURI + ", " + versionOf + ids);
 	}
 
 }

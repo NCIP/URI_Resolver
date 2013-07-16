@@ -12,23 +12,32 @@
 }
 </style>
 </head>
-<c:url value="/j_spring_security_logout" var="logoutUrl" />
+
 <body onload='document.f.j_username.focus();'>
 	<h2>Welcome to the CTS2 URI Resolver REST Interface</h2>
-<br/>
-	<h3>To edit the database you must log in: </h3>
 	
-	<c:if test="${not empty error}">
+	<c:if test="${not empty publicDir}">
+		<h3><a href="public/examples">Example Public Queries</a></h3>
+	</c:if>
+			
+	<c:if test="${not empty loginFailed}">
 		<div class="errorblock">
 			Your login attempt was not successful, try again.<br /> Caused :
 			${sessionScope["SPRING_SECURITY_LAST_EXCEPTION"].message}
 		</div>
 	</c:if>
-
  
-	<form name='f' action="<c:url value='j_spring_security_check' />"
+	<c:if test="${not empty accessDenied}">
+		<div class="errorblock">
+			You must login to access restricted pages.<br />
+		</div>
+	</c:if>
+ 
+	<form name='f' action="<c:url value='/j_spring_security_check' />"
 		method='POST'>
  
+		<h4>To edit the database you must log in: </h4>
+
 		<table>
 			<tr>
 				<td>User:</td>
@@ -41,24 +50,16 @@
 				</td>
 			</tr>
 			<tr>
-				<td colspan='2'><input name="submit" type="submit"
-					value="submit" />
+				<td colspan='2'>
+					<input name="submit" type="submit" value="submit" />
+					<input name="reset" type="reset" />
 				</td>
-			</tr>
-			<tr>
-				<td colspan='2'><input name="reset" type="reset" />
-				</td>
-			</tr>
+			</tr>			
 		</table>
  
 	</form>
 	
-	<h3><a href="public/examples">Example Public Queries</a></h3>
-	
-	<br/>
-	<br/>
-
-	<br/><br/>    
+   
 	<c:url value="/j_spring_security_logout" var="logoutUrl" />
 	<a href="${logoutUrl}">Log Out</a>
 	

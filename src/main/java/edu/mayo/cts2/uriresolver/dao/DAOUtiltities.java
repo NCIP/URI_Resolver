@@ -18,8 +18,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import edu.mayo.cts2.uriresolver.controller.ResolveURI;
 
+
 public class DAOUtiltities {
-	private static Logger logger = Logger.getLogger(ResolveURI.class);
+	private static Logger logger = Logger.getLogger(DAOUtiltities.class);
 	private static final int ACCESS_DENIED = 1045;
 	private static final int DATABASE_MISSING = 1049;
 	private static final String [] TABLENAMES = {"urimap", "versionmap", "identifiermap"};

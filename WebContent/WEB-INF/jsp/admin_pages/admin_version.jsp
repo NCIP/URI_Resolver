@@ -30,9 +30,12 @@
         function clearVersionIDList(){
         	document.getElementById("listVersionID").options.length = 0;
         	document.getElementById("listVersionID").style.visibility='visible';
+            document.getElementById("btnAddIdentifier").style.visibility = 'hidden';
         }
         
         function clearForm() {
+            document.getElementById("btnAddIdentifier").style.visibility = 'hidden';
+        	document.getElementById("btnSave").style.visibility = 'hidden';
         	clearVersionLists();
         	clearURIMapDetails();
         	clearIdentifiers();
@@ -101,8 +104,12 @@
         
         // Called when "Version Of" list is changed
         function loadVersionIds(versionId) {
+        	document.getElementById("btnSave").style.visibility = 'hidden';
+        	
         	var type = $('#listResourceType').val();
         	clearURIMapDetails();
+        	clearIdentifiers();
+        	
         	if(type == "CODE_SYSTEM") {
             	document.getElementById("listVersionID").style.visibility='visible';
 	            $.ajax({
@@ -132,6 +139,10 @@
 	                  			loadIdentifiers();
 	                    	}
 	                    }
+	                    if(select.options.length == 2){
+	                    	select.options[1].selected = true;
+                  			loadIdentifiers();	                    	
+	                    }
 	                }
 	            });
         	}
@@ -139,6 +150,7 @@
             	clearVersionIDList();
             	document.getElementById("listVersionID").style.visibility='hidden';
         		loadVersionIdentifiers();
+                document.getElementById("btnAddIdentifier").style.visibility = 'visible';
         	}
         }
         
@@ -171,6 +183,7 @@
         	var id = escape($('#listVersionOf').val());
         	var vID = escape($('#listVersionID').val());
         	var restURL = serviceUrl + "version/" + type + "/" + id + "/" + vID;
+        	document.getElementById("btnSave").style.visibility = 'hidden';
         	
             $.ajax({
                 type: "GET",
@@ -189,6 +202,7 @@
                 },
                 success: function(data) {
                     setIds(data);
+                    document.getElementById("btnAddIdentifier").style.visibility = 'visible';
                 }
             });
         }
@@ -206,8 +220,8 @@
                     $('#inputUriMapVersionOf').val(data.versionOf);
 
 					clearIdentifiers();                    
-                    for(i in data.identifiers){
-                        addIdentifier(data.identifiers[i]);
+                    for(i in data.ids){
+                        addIdentifier(data.ids[i]);
                     }
                 }
             });
@@ -225,7 +239,12 @@
 
             newElem.find('.btnDel').click(function() {
                 newElem.remove();
+                document.getElementById("btnSave").style.visibility = 'visible';
             });
+        }
+        
+        function identifierChanged() {
+            document.getElementById("btnSave").style.visibility = 'visible';
         }
         
         function createAndSendJSON(){
@@ -264,6 +283,7 @@
 	
             $('#btnAddIdentifier').click(function() {
                 addIdentifier();
+                document.getElementById("btnSave").style.visibility = 'visible';
 
                 return false;
             });
@@ -284,11 +304,15 @@
                 return false;
             }); 
             
+            document.getElementById("btnAddIdentifier").style.visibility = 'hidden';
+            document.getElementById("btnSave").style.visibility = 'hidden';
+            
         });
     </script>
 </head>
  
 <body>
+<h1>CTS2 URI Resolver - Version Data</h1>
  
 <form id="myForm" class="registration">
     <fieldset style="float:none !important">
@@ -314,17 +338,20 @@
 
     <fieldset>
         <legend>URI Map Details</legend>
-    <label>Resource Type: </label>
-                    <select name="inputUriMapResourceType" id="inputUriMapResourceType" >
-                      <option value="CODE_SYSTEM_VERSION">CODE_SYSTEM_VERSION</option>
-                      <option value="MAP_VERSION">MAP_VERSION</option>
-                    </select>
+<!--     <label>Resource Type: </label> -->
+<!--                     <select name="inputUriMapResourceType" id="inputUriMapResourceType" > -->
+<!--                       <option value="SELECT"></option> -->
+<!--                       <option value="CODE_SYSTEM">CODE_SYSTEM_VERSION</option> -->
+<!--                       <option value="CODE_SYSTEM_VERSION">CODE_SYSTEM_VERSION</option> -->
+<!--                       <option value="MAP_VERSION">MAP_VERSION</option> -->
+<!--                     </select> -->
+	<label>Resource Type: </label><input type="text" name="inputUriMapResourceType" id="inputUriMapResourceType" readonly />
     <br/>
-    <label>Version Name: </label><input type="text" name="inputUriMapVersionName" id="inputUriMapVersionName" />
+    <label>Version Name: </label><input type="text" name="inputUriMapVersionName" id="inputUriMapVersionName" readonly />
     <br/>
-    <label>Version URI: </label><input type="text" name="inputUriMapVersionUri" id="inputUriMapVersionUri" />
+    <label>Version URI: </label><input type="text" name="inputUriMapVersionUri" id="inputUriMapVersionUri" readonly />
     <br/>
-    <label>Version Of: </label><input type="text" name="inputUriMapVersionOf" id="inputUriMapVersionOf" />
+    <label>Version Of: </label><input type="text" name="inputUriMapVersionOf" id="inputUriMapVersionOf" readonly />
 
 		</fieldset>
 
@@ -336,8 +363,8 @@
      
             
     <fieldset> 
-        <button id="btnSave" class="button" value="save">Save</button>
         <button id="btnClearAll" class="button" value="clear">Clear All</button>
+        <button id="btnSave" class="button" value="save" style="background-color:#e5004f">Save</button>
     </fieldset>
    
 </form>
@@ -345,13 +372,19 @@
     <div id="divToClone" style='visibility:hidden'>
          <div class="clonedInput">
             <label>Identifier: </label>
-            <input type="text" class="identifierInput"/>
+            <input type="text" class="identifierInput" onkeypress="identifierChanged()"/>
             <button value="Remove Identifier" class="btnDel button">Remove Identifier</button>
         </div>
     </div>
+    
+    
 	<br/><br/>    
-    <h4><a href="identifierEdit">Edit Identifier Data</a></h4> 
 	<c:url value="/j_spring_security_logout" var="logoutUrl" />
-	<a href="${logoutUrl}">Log Out</a>
+    <h4 align="center">
+    	<a href="identifierEdit">Edit Identifier Data</a> |
+	    <a href="../public/examples">Example Public Queries</a> | 
+		<a href="${logoutUrl}">Log Out</a>
+    </h4>
+
 </body>
 </html>

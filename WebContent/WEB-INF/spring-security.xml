@@ -10,8 +10,8 @@
 			logout-url="/j_spring_security_logout" 
  -->
  
-<!-- 	<http auto-config="true" use-expressions="true" access-denied-page="/login" > -->
-	<http auto-config='true' use-expressions='true'>
+<!-- 	<http auto-config="true" use-expressions="true" access-denied-page="/public/accessDenied" > -->
+	<http auto-config='true' use-expressions='true' >
 		<intercept-url 
 			pattern="/" 
 			access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_ANONYMOUS')" />
@@ -34,7 +34,7 @@
 <!--         	max-sessions="1"  -->
 <!--         	error-if-maximum-exceeded="true" /> -->
 <!--     	</session-management> -->
-		<access-denied-handler error-page="/accessDenied" />
+<!-- 		<access-denied-handler error-page="/public/accessDenied" /> -->
 	</http>
  
 	<authentication-manager>

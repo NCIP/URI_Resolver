@@ -30,6 +30,8 @@
         }
 
         function clearForm() {
+            document.getElementById("btnAddIdentifier").style.visibility = 'hidden';
+        	document.getElementById("btnSave").style.visibility = 'hidden';
         	clearURIMapIdentifiersList();
         	clearURIMapDetails();
         	clearIdentifiers();
@@ -96,6 +98,7 @@
 	    
         // Called when "Identifiers" list is changed
 	    function loadIdentifiers(){
+        	document.getElementById("btnSave").style.visibility = 'hidden';
             $.ajax({
                 type: "GET",
                 url: serviceUrl + "id/" + $('#listResourceType').val() + "?id=" + $('#listURIMapIdentifiers').val(),
@@ -109,6 +112,7 @@
                 },
                 success: function(data) {
                     setIds(data);
+                    document.getElementById("btnAddIdentifier").style.visibility = 'visible';
                 }
             });
             return false;
@@ -134,8 +138,8 @@
                     $('#inputUriMapBaseEntityUri').val(data.baseEntityURI);
 
                     $('#identifiers').empty();
-                    for(i in data.identifiers){
-                        addIdentifier(data.identifiers[i]);
+                    for(i in data.ids){
+                        addIdentifier(data.ids[i]);
                     }
                 }
             });
@@ -153,9 +157,14 @@
 
             newElem.find('.btnDel').click(function() {
                 newElem.remove();
+                document.getElementById("btnSave").style.visibility = 'visible';
             });
         }
 
+        function identifierChanged() {
+            document.getElementById("btnSave").style.visibility = 'visible';
+        }
+        
 		function createAndSendJSON() {
 	        var json = {
 	                resourceType : $('#inputUriMapResourceType').val(),
@@ -195,8 +204,9 @@
         
         $(document).ready(function() {
 
-            $('#btnAdd').click(function() {
+            $('#btnAddIdentifier').click(function() {
                 addIdentifier();
+                document.getElementById("btnSave").style.visibility = 'visible';
                 return false;
             });
  
@@ -215,11 +225,16 @@
 
                 return false;
             });
+            
+            document.getElementById("btnAddIdentifier").style.visibility = 'hidden';
+            document.getElementById("btnSave").style.visibility = 'hidden';
+
         });
     </script>
 </head>
  
 <body>
+<h1>CTS2 URI Resolver - Identifier Data</h1>
  
 <form id="myForm" class="registration">
     <fieldset style="float:none !important">
@@ -240,29 +255,30 @@
 
     <fieldset>
         <legend>URI Map Details</legend>
-    <label>Resource Type: </label>
-                    <select name="inputUriMapResourceType" id="inputUriMapResourceType" >
-                      <option value="CODE_SYSTEM">CODE_SYSTEM</option>
-                      <option value="VALUE_SET">VALUE_SET</option>
-                    </select>
+<!--     <label>Resource Type: </label> -->
+<!--                     <select name="inputUriMapResourceType" id="inputUriMapResourceType" > -->
+<!--                       <option value="CODE_SYSTEM">CODE_SYSTEM</option> -->
+<!--                       <option value="VALUE_SET">VALUE_SET</option> -->
+<!--                     </select> -->
+	<label>Resource Type: </label><input type="text" name="inputUriMapResourceType" id="inputUriMapResourceType" readonly />
     <br/>
-    <label>Resource Name: </label><input type="text" name="inputUriMapResourceName" id="inputUriMapResourceName" />
+    <label>Resource Name: </label><input type="text" name="inputUriMapResourceName" id="inputUriMapResourceName" readonly />
     <br/>
-    <label>Resource URI: </label><input type="text" name="inputUriMapResourceUri" id="inputUriMapResourceUri" />
+    <label>Resource URI: </label><input type="text" name="inputUriMapResourceUri" id="inputUriMapResourceUri" readonly />
     <br/>
-    <label>Base Entity URI: </label><input type="text" name="inputUriMapBaseEntityUri" id="inputUriMapBaseEntityUri" />
+    <label>Base Entity URI: </label><input type="text" name="inputUriMapBaseEntityUri" id="inputUriMapBaseEntityUri" readonly />
     </fieldset>
 
     <br/>
     <fieldset style="float:none !important">
         <div id="identifiers" ></div>
-        <button id="btnAdd" class="button" value="Add Identifier">Add Identifier</button>
+        <button id="btnAddIdentifier" class="button" value="Add Identifier">Add Identifier</button>
     </fieldset>
      
             
     <fieldset> 
-        <button id="btnSave" class="button" value="save">Save</button>
         <button id="btnClearAll" class="button" value="clear">Clear All</button>
+        <button id="btnSave" class="button" value="save" style="background-color:#e5004f">Save</button>
     </fieldset>
    
 </form>
@@ -270,13 +286,20 @@
     <div id="divToClone" style='visibility:hidden'>
          <div class="clonedInput">
             <label>Identifier: </label>
-            <input type="text" class="identifierInput"/>
+            <input type="text" class="identifierInput" onkeypress="identifierChanged()"/>
             <button value="Remove Identifier" class="btnDel button">Remove Identifier</button>
         </div>
     </div>
+    
+    
 	<br/><br/>
-    <h4><a href="versionEdit">Edit Version Data</a></h4> 
 	<c:url value="/j_spring_security_logout" var="logoutUrl" />
-	<a href="${logoutUrl}">Log Out</a>
+    <h4 align="center">
+    	<a href="versionEdit">Edit Version Data</a> | 
+	    <a href="../public/examples">Example Public Queries</a> | 
+		<a href="${logoutUrl}">Log Out</a>
+    </h4>
+
+
 </body>
 </html>

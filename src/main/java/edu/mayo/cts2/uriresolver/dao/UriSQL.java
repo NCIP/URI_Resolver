@@ -1,8 +1,9 @@
 package edu.mayo.cts2.uriresolver.dao;
-import static edu.mayo.cts2.uriresolver.constants.UriResolverConstants.*;
+import static edu.mayo.cts2.uriresolver.constants.UriResolverConstants.NULL_VALUE;
 import edu.mayo.cts2.uriresolver.beans.UriResults;
 
 public class UriSQL {
+	
 	public static String sqlSELECTBaseFieldsFromUMTable(){
 		String sql = "SELECT ";
 		sql += "um.resourcetype ResourceType, ";
@@ -33,7 +34,7 @@ public class UriSQL {
 	public static String createSQLgetIdentifierByID(String type, String id) {
 		String sql = sqlSELECTBaseFieldsFromUMTable();
 		sql += NULL_VALUE + " VersionOf, ";
-		sql += "im.identifier Identifier ";
+		sql += "im.identifier id ";
 		   
 		sql += "FROM urimap um ";											   
 		sql += "LEFT JOIN identifiermap im ";
@@ -73,7 +74,7 @@ public class UriSQL {
 		String sql = sqlSELECTBaseFieldsFromUMTable();
 		
 		sql += NULL_VALUE + " VersionOf, ";
-		sql += NULL_VALUE + " Identifier ";
+		sql += NULL_VALUE + " id ";
 
 		sql += "FROM urimap um ";
 		sql += sqlWHEREResourceTypeANDResourceNameFromTable("um", type, identifier);
@@ -85,7 +86,7 @@ public class UriSQL {
 		String sql = sqlSELECTBaseFieldsFromUMTable();
 		
 		sql += NULL_VALUE + " VersionOf, ";
-		sql += "im.identifier Identifier ";
+		sql += "im.identifier id ";
 	    
 		sql += "FROM "; 
 		sql += "urimap um "; 
@@ -103,7 +104,7 @@ public class UriSQL {
 		String sql = sqlSELECTBaseFieldsFromUMTable();
 		
 		sql += NULL_VALUE + " VersionOf, ";
-		sql += NULL_VALUE + " Identifier ";
+		sql += NULL_VALUE + " id ";
 
 		sql += "FROM urimap um ";
 
@@ -127,7 +128,7 @@ public class UriSQL {
 		String sql = sqlSELECTBaseFieldsFromUMTable();
 		
 		sql += "vm.resourcename VersionOf, ";
-		sql += "vm.versionid Identifier ";
+		sql += "vm.versionid id ";
 		
 		sql += "FROM "; 
 		sql += "urimap um "; 
@@ -171,35 +172,48 @@ public class UriSQL {
 	}
 
 	public static String createSQLsaveVersionIdentifiersVersionMap(
-			UriResults uriResults, String identifier) {
+			UriResults uriResults, String versionID) {
 		String type = convertVersionTypeToType(uriResults.getResourceType());
 
 		String sql = "INSERT INTO versionmap (resourcetype, resourcename, versionid, versionname, versiontype) ";
 		sql += "VALUES ('";
 		sql += type + "', '";								// _version_type_to_type(json.resourceType)
 		sql += uriResults.getVersionOf() + "', '";			// json.versionOf
-		sql += identifier + "', '";							// id
+		sql += versionID + "', '";							// id
 		sql += uriResults.getResourceName() + "', '";		// json.resourceName
 		sql += uriResults.getResourceType() + "')";			// json.resourceType
 		return sql;
 	}
 
 	public static String createSQLgetAllResourceNames(String type) {
-		String sql = "SELECT resourcename FROM urimap ";
-		sql += "WHERE resourcetype = '" + type + "' ";
-		sql += "ORDER BY resourcename";
+		String sql = null;
+		if(type.toUpperCase().equals("CODE_SYSTEM")){
+			sql = "SELECT UPPER(resourcename) temp, resourcename FROM ";
+			sql += "(select distinct(u.resourcename) resourcename";
+			sql += " from urimap u inner join versionmap v ";
+			sql += " on ";
+			sql += " (u.resourcename = v.resourcename and u.resourcetype = v.resourcetype) ";
+			sql += " where ";
+			sql += " u.resourcetype = '" + type + "') names ";
+			sql += " ORDER BY temp ";
+		}
+		else{
+			sql = "SELECT UPPER(resourcename) temp, resourcename FROM urimap ";
+			sql += "WHERE resourcetype = '" + type + "' ";
+			sql += "ORDER BY temp ";
+		}
 		return sql;
 	}
 
 	public static String createSQLgetAllVersionIds(String type,
 			String identifier) {
-		String sql = "SELECT versionid FROM versionmap ";
+		String sql = "SELECT UPPER(versionid) temp, versionid FROM versionmap ";
 		sql += "WHERE (resourcetype = '" + type + "' ";
 		sql += "       AND resourcename = '" + identifier + "') ";
 		sql += "      OR ";
 		sql += "      (versiontype = '" + type + "' ";
 		sql += "       AND versionname = '" + identifier + "') ";
-		sql += "ORDER BY versionid ";
+		sql += "ORDER BY temp ";
 		return sql;
 	}
 	

@@ -4,16 +4,23 @@
 <title>CTS2 URI Resolver</title>
 </head>
 <body>
-    <div align='center'>
-        <h2>Admin Pages <br> <br> 
-                <a href="identifierEdit">Edit Identifier ID Data</a><br>
+<h2>CTS2 URI Resolver - Admin Pages</h2>
+    <div>
+		<ul>
+			<li>
+            	<a href="identifierEdit">Edit Identifier ID Data</a><br>
+            </li>
+			
+			<li>
                 <a href="versionEdit">Edit Version Data</a>
-        </h2>
+			</li>		
+		</ul>    
     </div>
 
-	<br/><br/> 	
-	<c:url value="/j_spring_security_logout" var="logoutUrl" />
-	<a href="${logoutUrl}">Log Out</a>
+<br/><br/>
+<h4><a href="../public/examples">Example Public Queries</a></h4>
+<c:url value="/j_spring_security_logout" var="logoutUrl" />
+<a href="${logoutUrl}">Log Out</a>
     
 </body>
 </html>

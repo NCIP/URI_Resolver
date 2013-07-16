@@ -20,14 +20,14 @@ public class UriResultsMapper implements RowMapper<UriResults>{
 		uriData.setBaseEntityURI(rs.getString("baseEntityURI"));
 		uriData.setVersionOf(rs.getString("VersionOf"));
 		
-		String identifier = rs.getString("identifier");
-		if(identifier != null){
-			List<String> identifiers = new ArrayList<String>();
-			identifiers.add(identifier);
+		String id = rs.getString("id");
+		if(id != null){
+			List<String> ids = new ArrayList<String>();
+			ids.add(id);
 			while(rs.next()){
-				identifiers.add(rs.getString("identifier"));			
+				ids.add(rs.getString("id"));			
 			}
-			uriData.setIdentifiers(identifiers );
+			uriData.setIds(ids );
 		}
 		
 
