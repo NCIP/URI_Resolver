@@ -36,12 +36,18 @@
 <!--     	</session-management> -->
 <!-- 		<access-denied-handler error-page="/public/accessDenied" /> -->
 	</http>
+
+
  
 	<authentication-manager>
-	  <authentication-provider>
-		<user-service id="userDetailsService" properties="users.properties" />
-	  </authentication-provider>
+	  <authentication-provider user-service-ref="myUserDetailService" />
 	</authentication-manager>
+	
+<!-- 	<authentication-manager> -->
+<!-- 	  <authentication-provider> -->
+<!-- 		<user-service id="userDetailsService" properties="classpath:user.properties" /> -->
+<!-- 	  </authentication-provider> -->
+<!-- 	</authentication-manager> -->
 
 
 

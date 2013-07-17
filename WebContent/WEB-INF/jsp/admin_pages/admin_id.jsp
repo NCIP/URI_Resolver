@@ -6,7 +6,7 @@
     <title></title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
 
-    <link rel="stylesheet" href="../style.css" type="text/css" />
+    <link rel="stylesheet" href="/WEB-INF/public/style.css" type="text/css" />
 
     <script type="text/javascript">
 

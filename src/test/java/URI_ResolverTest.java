@@ -1,7 +1,9 @@
 import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +16,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -81,11 +82,13 @@ public class URI_ResolverTest {
 		};
 		
 		
+
+		/*
 		@Before
 		public void setup() {
 			this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 		}
-		
+
 		@Test
 		public void testSetup(){
 			assertNotNull("mockMvc is null", this.mockMvc);
@@ -140,32 +143,32 @@ public class URI_ResolverTest {
 
 		
 
-		@Test
-		public void testJSONValues() throws Exception {	
-			for(int i=0; i < INPUT_URL.length; i++){ 
-				if(JSON_VALUES[i] != null){
-					ResultActions results = mockMvc.perform(get(INPUT_URL[i]).accept(MediaType.APPLICATION_JSON));
-					for(int j=0; j < JSON_FIELDS.length; j++){
-						if(JSON_VALUES[i][j] != null){
-							results.andExpect(jsonPath(JSON_FIELDS[j]).value(JSON_VALUES[i][j]));
-						}
-						else{
-							results.andExpect(jsonPath(JSON_FIELDS[j]).doesNotExist());
-						}
-						
-						if(JSON_IDENTIFIERS[i] != null){
-							results.andExpect(jsonPath("identifiers").isArray());
-							for(int k=0; k < JSON_IDENTIFIERS[i].length; k++){
-								results.andExpect(jsonPath("identifiers[" + k + "]").value(JSON_IDENTIFIERS[i][k]));
-							}
-						}
-						else{
-							results.andExpect(jsonPath("identifiers").doesNotExist());
-						}
-					}
-					results.andDo(print());
-				}
-			}
+//		@Test
+//		public void testJSONValues() throws Exception {	
+//			for(int i=0; i < INPUT_URL.length; i++){ 
+//				if(JSON_VALUES[i] != null){
+//					ResultActions results = mockMvc.perform(get(INPUT_URL[i]).accept(MediaType.APPLICATION_JSON));
+//					for(int j=0; j < JSON_FIELDS.length; j++){
+//						if(JSON_VALUES[i][j] != null){
+//							results.andExpect(jsonPath(JSON_FIELDS[j]).value(JSON_VALUES[i][j]));
+//						}
+//						else{
+//							results.andExpect(jsonPath(JSON_FIELDS[j]).doesNotExist());
+//						}
+//						
+//						if(JSON_IDENTIFIERS[i] != null){
+//							results.andExpect(jsonPath("identifiers").isArray());
+//							for(int k=0; k < JSON_IDENTIFIERS[i].length; k++){
+//								results.andExpect(jsonPath("identifiers[" + k + "]").value(JSON_IDENTIFIERS[i][k]));
+//							}
+//						}
+//						else{
+//							results.andExpect(jsonPath("identifiers").doesNotExist());
+//						}
+//					}
+//					results.andDo(print());
+//				}
+//			}
 			
 
 //			mockMvc.perform( get(INPUT_URL[1]).accept(MediaType.APPLICATION_JSON))
@@ -173,7 +176,7 @@ public class URI_ResolverTest {
 //			.andExpect(jsonPath("$.resourceName").value("rdf"))
 //			.andExpect(jsonPath("$.resourceURI").value("http://www.w3.org/1999/02/22-rdf-syntax-ns#"))
 //			.andExpect(jsonPath("$.baseEntityURI").value("http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
-		}    
+//		}    
 		
 		
 		@Configuration
@@ -184,4 +187,5 @@ public class URI_ResolverTest {
 				return new ResolveURI();
 			}
 		}
+		*/
 }

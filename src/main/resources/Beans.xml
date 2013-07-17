@@ -18,7 +18,8 @@
 				<value>file:#{ systemProperties['user.home']}/.cts2_uri/database.properties</value>     
 			</list>
 		</property>		
-   </bean>    
+   </bean>
+   
    
    <bean id="uriJDBCTemplate" 
       class="edu.mayo.cts2.uriresolver.dao.UriDAOJdbc">
@@ -34,6 +35,16 @@
   		<property name="dataSource" ref="h2DataSource"/>
    </bean>
  -->
+ 	<bean id="databaseSecurity"
+      class="edu.mayo.cts2.uriresolver.security.DatabaseSecurity">
+ 		<property name="dbEditable" value="${db.editable}" />
+      	<property name="fileLocations">
+   			<list>
+				<value>file:#{ systemProperties['user.home']}/.cts2_uri/user.properties</value>     
+ 				<value>classpath:user.properties</value>
+			</list>
+      	</property>
+ 	</bean>
  
    <bean id="dataSource" 
       class="org.springframework.jdbc.datasource.DriverManagerDataSource">
