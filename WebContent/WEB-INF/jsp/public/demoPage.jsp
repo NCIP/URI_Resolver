@@ -14,8 +14,8 @@
 </head>
 <body>
 
-<h2>URI Map by ID</h2>
-<b>SYNTAX:</b> <code><b>/id/</b><i>&lt;Resource Type&gt;</i><b>?id=</b><i>&lt;Version ID&gt;</i></code>
+<h2>URI Details for a Resource Type and ID</h2>
+<b>SYNTAX:</b> <code><b>/id/</b><i>&lt;Resource Type&gt;</i><b>?id=</b><i>&lt;ID&gt;</i></code>
 <br/>
 <font color=red>Valid Resource Type Values: "CODE_SYSTEM", "VALUE_SET"</font>
 <table border="1">
@@ -118,8 +118,8 @@
 </table><br/><br/>
 
 <div class="horizontalBreak"></div>
-<h2>URI Map by Identifier</h2>
-<b>SYNTAX:</b> <code><b>/id/</b><i>&lt;Resource Type&gt;</i><b>/</b><i>&lt;Version Identifier&gt;</i></code>
+<h2>URI Details for a Resource Type and Identifier</h2>
+<b>SYNTAX:</b> <code><b>/id/</b><i>&lt;Resource Type&gt;</i><b>/</b><i>&lt;Identifier&gt;</i></code>
 <br/>
 <font color=red>Valid Resource Type Values: "CODE_SYSTEM", "CODE_SYSTEM_VERSION", "VALUE_SET"</font>
 <br/>
@@ -249,8 +249,8 @@
 
 
 <div class="horizontalBreak"></div>
-<h2>All IDs in a Map</h2>
-<b>SYNTAX:</b> <code><b>/ids/</b><i>&lt;Resource Type&gt;</i><b>/</b><i>&lt;Version Identifier&gt;</i></code>
+<h2>URI Details with all IDs for a Resource Type and Identifier</h2>
+<b>SYNTAX:</b> <code><b>/ids/</b><i>&lt;Resource Type&gt;</i><b>/</b><i>&lt;Identifier&gt;</i></code>
 <br/>
 <font color=red>Valid Resource Type Values: "CODE_SYSTEM", "VALUE_SET"</font>
 <br/>
@@ -364,15 +364,27 @@
 </table><br/><br/>
 	
 <div class="horizontalBreak"></div>
-<h2>URI Map by Version ID</h2>
-<b>SYNTAX:</b> <code><b>/version/</b><i>&lt;Resource Type&gt;</i><b>/</b><i>&lt;Version Identifier&gt;</i><b>?versionID=</b><i>&lt;Version ID&gt;</i></code>
+<h2>URI Details with all IDs for a Resource Type, Identifier, and Version</h2>
+<table>
+	<tr>
+		<td valign="top">
+			<b>SYNTAX:</b> 
+		</td>
+		<td valign="bottom">
+			<code>
+			<b>/version/</b><i>&lt;Resource Type&gt;</i><b>/</b><i>&lt;Identifier&gt;</i><b>?version=</b><i>&lt;Version&gt;</i><br/>
+	        <b>/version/</b><i>&lt;Resource Type&gt;</i><b>/</b><i>&lt;Identifier&gt;</i><b>/</b><i>&lt;Version&gt;</i> 
+			</code>
+		</td>
+	</tr>
+</table>
 <br/>
 <font color=red>Valid Resource Type Values: "CODE_SYSTEM"</font>
 <br/>
 <table border="1">
 	<tr>
 		<td>
-			<a href="../version/CODE_SYSTEM/AIR?versionID=1993">/version/CODE_SYSTEM/AIR?versionID=1993</a>
+			<a href="../version/CODE_SYSTEM/AIR?version=1993">/version/CODE_SYSTEM/AIR?version=1993</a>
 		</td>
 		<td>
 <pre>
@@ -389,32 +401,6 @@
 	
 	<tr>
 		<td>
-			<a href="../version/CODE_SYSTEM/X12.3?versionID=2.40.5">/version/CODE_SYSTEM/X12.3?versionID=2.40.5</a>
-		</td>
-		<td>
-<pre>
-{
- "resourceType":"CODE_SYSTEM_VERSION",
- "resourceName":"X12.3_2.40.5",
- "resourceURI":"http://id.hl7.org/codesystem/X12.3/version/2.40.5",
- "versionOf":"X12.3",
- "ids":["1","2.40.5"]
-}
-</pre>
-		</td>
-	</tr></table><br/><br/>
-
-
-
-<div class="horizontalBreak"></div>
-<h2>URI Map by Version Identifier</h2>
-<b>SYNTAX:</b> <code><b>/version/</b><i>&lt;Resource Type&gt;/&lt;Version Identifier&gt;</i><b>/</b><i>&lt;Version ID&gt;</i></code>
-<br/>
-<font color=red>Valid Resource Type Values: "CODE_SYSTEM"</font>
-<br/>
-<table border="1">
-	<tr>
-		<td>
 			<a href="../version/CODE_SYSTEM/AIR/1993">/version/CODE_SYSTEM/AIR/1993</a>
 		</td>
 		<td>
@@ -425,6 +411,26 @@
 "resourceURI":"http://id.nlm.nih.gov/cui/C1140092",
 "versionOf":"AIR",
 "ids":["1993","AIR93"]
+}
+</pre>
+		</td>
+	</tr>
+
+</table><br/><br/>
+
+<table border="1">
+	<tr>
+		<td>
+			<a href="../version/CODE_SYSTEM/X12.3?version=2.40.5">/version/CODE_SYSTEM/X12.3?version=2.40.5</a>
+		</td>
+		<td>
+<pre>
+{
+ "resourceType":"CODE_SYSTEM_VERSION",
+ "resourceName":"X12.3_2.40.5",
+ "resourceURI":"http://id.hl7.org/codesystem/X12.3/version/2.40.5",
+ "versionOf":"X12.3",
+ "ids":["1","2.40.5"]
 }
 </pre>
 		</td>
@@ -447,8 +453,8 @@
 
 
 <div class="horizontalBreak"></div>
-<h2>All Version Identifiers for a Version</h2>
-<b>SYNTAX:</b> <code><b>/versions/</b><i>&lt;Resource Type&gt;/&lt;Version Identifier&gt;</i></code>
+<h2>URI Details with all IDs for a Version Identifier</h2>
+<b>SYNTAX:</b> <code><b>/versions/</b><i>&lt;Resource Type&gt;/&lt;Identifier&gt;</i></code>
 <br/>
 <font color=red>Valid Resource Type Values: "CODE_SYSTEM_VERSION"</font>
 <br/>

@@ -25,18 +25,23 @@ public class ResolveURI {
 	private static URILogger logger = new URILogger(ResolveURI.class);
 	private UriDAO uriDAO;
 	private static final String TYPE="type";
-	private static final String IDENTIFIER="identifier";
-	private static final String VERSIONID = "versionID";
+	private static final String IDENTIFIER = "identifier";
+	private static final String ID = "id";
+	private static final String VERSION = "version";
 	
 	@RequestMapping(method=RequestMethod.PUT, value="/versions/{type}/{identifier}")
 	public ResponseEntity<String> saveVersionIdentifiers(@RequestBody UriResults uriResults, @PathVariable String type, @PathVariable String identifier){
+		logger.info("\n\nsaveVersionIdentifiers\n\n");
 		uriDAO.saveVersionIdentifiers(uriResults);
+		logger.info("finshed saving");
 		return new ResponseEntity<String>(new HttpHeaders(), HttpStatus.OK);
 	}
 	
 	@RequestMapping(method=RequestMethod.PUT, value="/ids/{type}/{identifier}")
 	public ResponseEntity<String> saveIdentifiers(@RequestBody UriResults uriResults, @PathVariable String type, @PathVariable String identifier){
+		logger.info("\n\nsaveIdentifiers\n\n");
 		uriDAO.saveIdentifiers(uriResults);
+		logger.info("finshed saving");
 		return new ResponseEntity<String>(new HttpHeaders(), HttpStatus.OK);
 	}
 
@@ -83,9 +88,9 @@ public class ResolveURI {
 	// -------
 	@RequestMapping(method=RequestMethod.GET, value="/id/{type}") 
 //	@ResponseBody
-	public ModelAndView uriMapById(@PathVariable(TYPE) String type, @RequestParam(value = "id") String id){
+	public ModelAndView uriMapById(@PathVariable(TYPE) String type, @RequestParam(value = ID) String id){
 		logger.info("uriMapById");
-		logger.info("/id/" + type + "?" + id);
+		logger.info("/id/" + type + "?id=" + id);
 		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
 		if(uriDAO != null){
@@ -97,18 +102,18 @@ public class ResolveURI {
 	}
 
 	
-	// EXAMPLE:  /version/CODE_SYSTEM/AIR?versionID=1993
+	// EXAMPLE:  /version/CODE_SYSTEM/AIR?version=1993
 	// -------
 	@RequestMapping(method=RequestMethod.GET, value="/version/{type}/{identifier}")  
 //	@ResponseBody
 	public ModelAndView uriMapByVersionID(@PathVariable(TYPE) String type, 
-			@PathVariable(IDENTIFIER) String identifier, @RequestParam(value = VERSIONID) String versionID){
+			@PathVariable(IDENTIFIER) String identifier, @RequestParam(value = VERSION) String version){
 		logger.info("uriMapByVersionID");
-		logger.info("/version/" + type + "/" + identifier + "?" + versionID);
+		logger.info("/version/" + type + "/" + identifier + "?version=" + version);
 		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
 		if(uriDAO != null){
-			String versionIdentifier = uriDAO.getVersionIdentifierByVersionID(type, identifier, versionID);			
+			String versionIdentifier = uriDAO.getVersionIdentifierByVersionID(type, identifier, version);			
 			return new ModelAndView("redirect:/versions/CODE_SYSTEM_VERSION/" + versionIdentifier);
 		} 
 		
@@ -118,16 +123,16 @@ public class ResolveURI {
 
 	// EXAMPLE:  /version/CODE_SYSTEM/AIR/1993
 	// -------
-	@RequestMapping(method=RequestMethod.GET, value="/version/{type}/{identifier}/{versionID}")
+	@RequestMapping(method=RequestMethod.GET, value="/version/{type}/{identifier}/{version}")
 	//@ResponseBody
 	public ModelAndView uriMapByVersionIdentifier(@PathVariable(TYPE) String type, 
-			@PathVariable(IDENTIFIER) String identifier, @PathVariable(VERSIONID) String versionID){
+			@PathVariable(IDENTIFIER) String identifier, @PathVariable(VERSION) String version){
 		logger.info("uriMapByVersionIdentifier");
-		logger.info("/version/" + type + "/" + identifier + "/" + versionID);
+		logger.info("/version/" + type + "/" + identifier + "/" + version);
 		
 		uriDAO = DAOUtiltities.connectDB(uriDAO);
 		if(uriDAO != null){
-			String versionIdentifier = uriDAO.getVersionIdentifierByVersionID(type, identifier, versionID);
+			String versionIdentifier = uriDAO.getVersionIdentifierByVersionID(type, identifier, version);
 			logger.info("uriMapByVersionIdentifier: " + versionIdentifier);
 			return new ModelAndView("redirect:/versions/CODE_SYSTEM_VERSION/" + versionIdentifier);
 		} 

@@ -6,8 +6,6 @@
     <title></title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
 
-    <link rel="stylesheet" href="/WEB-INF/public/style.css" type="text/css" /> 
-
     <script type="text/javascript">
 
         var serviceUrl = "../";
@@ -253,13 +251,13 @@
                     resourceName : $('#inputUriMapVersionName').val(),
                     resourceURI : $('#inputUriMapVersionUri').val(),
                     versionOf : $('#inputUriMapVersionOf').val(),
-                    identifiers : []
+                    ids : []
                 };
 
                 $('.identifierInput').each(function(){
                     var val = $(this).val();
                     if(val && val != ''){
-                        json.identifiers.push($(this).val());
+                        json.ids.push($(this).val());
                     }
                 });
 
