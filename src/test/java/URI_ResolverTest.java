@@ -2,6 +2,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -16,11 +17,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import edu.mayo.cts2.uriresolver.controller.ResolveURI;
+import edu.mayo.cts2.uriresolver.logging.URILogger;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -28,6 +31,7 @@ import edu.mayo.cts2.uriresolver.controller.ResolveURI;
 @ContextConfiguration(locations={ "classpath:/uri_resolver-servlet.xml" })
 
 public class URI_ResolverTest {
+		private static URILogger logger = new URILogger(URI_ResolverTest.class);
 
 		@Autowired
 		private WebApplicationContext wac;
@@ -36,7 +40,16 @@ public class URI_ResolverTest {
 		
 		private final static String [] INPUT_URL = {
 			"/id/CODE_SYSTEM?id=rdf",
-			"/version/CODE_SYSTEM/AIR?versionID=1993",
+			
+			// --
+//			"/id/CODE_SYSTEM?id=AIR",
+//			"/id/CODE_SYSTEM?id=AI/RHEUM",
+//			"/id/CODE_SYSTEM?id=http://id.nlm.nih.gov/cui/C1140091",
+//			"/id/CODE_SYSTEM?id=X12.3",
+//			"/id/VALUE_SET?id=Abenakian",
+			// --
+			
+			"/version/CODE_SYSTEM/AIR?version=1993",
 			"/version/CODE_SYSTEM/AIR/1993",
 			"/id/CODE_SYSTEM/rdf",
 			"/ids/CODE_SYSTEM/AIR",
@@ -52,15 +65,24 @@ public class URI_ResolverTest {
 			null
 		};
 			
+		private final static int [] RETURNED_STATUS = {
+			302,
+			302,
+			302,
+			400,
+			400,
+			400
+		};
+			
 		private final static String [] JSON_FIELDS = {
 			"resourceType",
 			"resourceName",
 			"resourceURI",
 			"baseEntityURI"
-			//"identifiers"
+//			"ids"
 		};
 		
-		private final static String [][] JSON_IDENTIFIERS = {
+		private final static String [][] JSON_IDS = {
 			null,
 			null,
 			null,
@@ -83,7 +105,7 @@ public class URI_ResolverTest {
 		
 		
 
-		/*
+	
 		@Before
 		public void setup() {
 			this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
@@ -97,11 +119,12 @@ public class URI_ResolverTest {
 		@Test
 		public void testJSONStatusOK() throws Exception {	 
 			for(int i=0; i < INPUT_URL.length; i++){
-				if(REDIRECTED_URL[i] == null){
+				logger.info("CHECKING FOR VALID RETURNED STATUS: " + REDIRECTED_URL[i] + ", " + RETURNED_STATUS[i]);
+				if(RETURNED_STATUS[i] == 400){
 					mockMvc.perform( get(INPUT_URL[i]).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
 				}
-				else{
-					mockMvc.perform( get(INPUT_URL[i]).accept(MediaType.APPLICATION_JSON)).andExpect(status().isMovedTemporarily());
+				else if(RETURNED_STATUS[i] == 302){
+					mockMvc.perform( get(INPUT_URL[i]).accept(MediaType.APPLICATION_JSON)).andExpect(status().isFound());
 				}
 			}
 		}    
@@ -111,7 +134,7 @@ public class URI_ResolverTest {
 		public void testPrintAll() throws Exception {
 			if(PRINT){
 				for(int i=0; i < INPUT_URL.length; i++){ 
-					System.out.println("--------- Response " + i);
+					logger.info("--------- Response " + i);
 					mockMvc.perform( get(INPUT_URL[0]).accept(MediaType.APPLICATION_JSON)).andDo(print());
 				}
 			}				
@@ -134,7 +157,7 @@ public class URI_ResolverTest {
 		public void testJSONContentType() throws Exception {	 
 			for(int i=0; i < INPUT_URL.length; i++){
 				if(REDIRECTED_URL[i] == null){
-					System.out.println(INPUT_URL[i]);
+					logger.info(INPUT_URL[i]);
 					
 					mockMvc.perform( get(INPUT_URL[i]).accept(MediaType.APPLICATION_JSON)).andExpect(content().contentType("application/json"));
 				}
@@ -143,32 +166,32 @@ public class URI_ResolverTest {
 
 		
 
-//		@Test
-//		public void testJSONValues() throws Exception {	
-//			for(int i=0; i < INPUT_URL.length; i++){ 
-//				if(JSON_VALUES[i] != null){
-//					ResultActions results = mockMvc.perform(get(INPUT_URL[i]).accept(MediaType.APPLICATION_JSON));
-//					for(int j=0; j < JSON_FIELDS.length; j++){
-//						if(JSON_VALUES[i][j] != null){
-//							results.andExpect(jsonPath(JSON_FIELDS[j]).value(JSON_VALUES[i][j]));
-//						}
-//						else{
-//							results.andExpect(jsonPath(JSON_FIELDS[j]).doesNotExist());
-//						}
-//						
-//						if(JSON_IDENTIFIERS[i] != null){
-//							results.andExpect(jsonPath("identifiers").isArray());
-//							for(int k=0; k < JSON_IDENTIFIERS[i].length; k++){
-//								results.andExpect(jsonPath("identifiers[" + k + "]").value(JSON_IDENTIFIERS[i][k]));
-//							}
-//						}
-//						else{
-//							results.andExpect(jsonPath("identifiers").doesNotExist());
-//						}
-//					}
-//					results.andDo(print());
-//				}
-//			}
+		@Test
+		public void testJSONValues() throws Exception {	
+			for(int i=0; i < INPUT_URL.length; i++){ 
+				if(JSON_VALUES[i] != null){
+					ResultActions results = mockMvc.perform(get(INPUT_URL[i]).accept(MediaType.APPLICATION_JSON));
+					for(int j=0; j < JSON_FIELDS.length; j++){
+						if(JSON_VALUES[i][j] != null){
+							results.andExpect(jsonPath(JSON_FIELDS[j]).value(JSON_VALUES[i][j]));
+						}
+						else{
+							results.andExpect(jsonPath(JSON_FIELDS[j]).doesNotExist());
+						}
+						
+						if(JSON_IDS[i] != null){
+							results.andExpect(jsonPath("ids").isArray());
+							for(int k=0; k < JSON_IDS[i].length; k++){
+								results.andExpect(jsonPath("ids[" + k + "]").value(JSON_IDS[i][k]));
+							}
+						}
+						else{
+							results.andExpect(jsonPath("ids").doesNotExist());
+						}
+					}
+					results.andDo(print());
+				}
+			}
 			
 
 //			mockMvc.perform( get(INPUT_URL[1]).accept(MediaType.APPLICATION_JSON))
@@ -176,7 +199,7 @@ public class URI_ResolverTest {
 //			.andExpect(jsonPath("$.resourceName").value("rdf"))
 //			.andExpect(jsonPath("$.resourceURI").value("http://www.w3.org/1999/02/22-rdf-syntax-ns#"))
 //			.andExpect(jsonPath("$.baseEntityURI").value("http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
-//		}    
+		}    
 		
 		
 		@Configuration
@@ -187,5 +210,5 @@ public class URI_ResolverTest {
 				return new ResolveURI();
 			}
 		}
-		*/
+	
 }

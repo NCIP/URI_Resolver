@@ -4,8 +4,8 @@ import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class URILogger {
-	private static Logger logger;
-	private static LogDetails debugging;
+	private Logger logger;
+	private LogDetails debugging;
 
 	public static enum LogLevel {
 		ERROR(0), WARN(1), INFO(3), DEBUG(4);
