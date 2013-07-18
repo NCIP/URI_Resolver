@@ -12,15 +12,15 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import edu.mayo.cts2.uriresolver.controller.ResolveURI;
+import edu.mayo.cts2.uriresolver.logging.URILogger;
 
 
 public class DAOUtiltities {
-	private static Logger logger = Logger.getLogger(DAOUtiltities.class);
+	private static URILogger logger = new URILogger(DAOUtiltities.class);
 	private static final int ACCESS_DENIED = 1045;
 	private static final int DATABASE_MISSING = 1049;
 	private static final String [] TABLENAMES = {"urimap", "versionmap", "identifiermap"};
@@ -64,6 +64,7 @@ public class DAOUtiltities {
 
 	public static DataSource createInMemoryDatabase(UriDAO uriDAO) {
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
+
 		// createDatabase in memory
 		logger.info("Creating an in memory database");
 		DataSource ds = (DataSource) context.getBean("h2DataSource");

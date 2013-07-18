@@ -3,7 +3,7 @@ package edu.mayo.cts2.uriresolver.security;
 import java.util.List;
 
 public class DatabaseSecurity {
-	String dbEditable;
+	private String dbEditable;
 	private List<String> fileLocations;
 
 	public String getDbEditable() {

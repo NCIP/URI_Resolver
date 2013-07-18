@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,14 +21,17 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import edu.mayo.cts2.uriresolver.logging.LogDetails;
+import edu.mayo.cts2.uriresolver.logging.URILogger;
+
 @Service("myUserDetailService")
 public class UserDetailsServiceImpl implements UserDetailsService {
-	private static Logger logger = Logger.getLogger(UserDetailsServiceImpl.class);
+	private static URILogger logger = new URILogger(UserDetailsServiceImpl.class);
 
 	// just to emulate user data and credentials retrieval from a DB, or
 	// whatsoever authentication service
 	private static Map<String, UserDetails> userRepository = new HashMap<String, UserDetails>();
-
+	
 	static {
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
 		DatabaseSecurity dbSecurity = (DatabaseSecurity) context.getBean("databaseSecurity");
@@ -68,12 +70,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 			userAccounts = resource.getURL();
 			File userList = new File(userAccounts.getFile());
 			if(userList.exists()){
-				logger.info("FILE EXISTS");
 				try {
 					Scanner scanner = new Scanner(userList);
-					logger.info("HAVE SCANNER");
 					while(scanner.hasNext()){
-						logger.info("PROCESSING LINE");
 						String username = scanner.next().trim();
 						String password = scanner.next().trim();
 						logger.info("ACCOUNT: " + username + "\t" + password);
@@ -82,7 +81,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 						UserDetails user = new UserDetailsImpl(username, password, authList);
 						userRepository.put(username, user);
 					}
-					logger.info("DONE WITH FILE");
 					importedUsers = true;
 					scanner.close();
 				} catch (FileNotFoundException e) {
@@ -102,7 +100,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		}
 			
 			
-		logger.info("LEAVING IMPORTUSERS");
 		return importedUsers;
 	}
 

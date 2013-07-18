@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,13 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.mayo.cts2.uriresolver.beans.UriResourceNames;
 import edu.mayo.cts2.uriresolver.beans.UriResults;
 import edu.mayo.cts2.uriresolver.beans.UriVersionIds;
+import edu.mayo.cts2.uriresolver.logging.URILogger;
 import edu.mayo.cts2.uriresolver.mappers.UriResultsMapper;
-import edu.mayo.cts2.uriresolver.dao.UriSQL;
-import static edu.mayo.cts2.uriresolver.constants.UriResolverConstants.PRINT;
 
 
 public class UriDAOJdbc implements UriDAO {
-	private static Logger logger = Logger.getLogger(UriDAOJdbc.class);
+	private static URILogger logger = new URILogger(UriDAOJdbc.class);
 	private DataSource dataSource;
 	private JdbcTemplate jdbcTemplateObject;
 	
@@ -64,20 +62,18 @@ public class UriDAOJdbc implements UriDAO {
 		String resourceName = "";
 		String sql = UriSQL.createSQLgetIdentifierByID(type, id);
 			   
-		if(PRINT){
-			logger.info("getIdentifierByID");
-			logger.info(sql);
-		}
+		logger.info("getIdentifierByID");
+		logger.info(sql);
+		
 		
 		SqlRowSet data = this.jdbcTemplateObject.queryForRowSet(sql);		
 		
 		if(data.next()){
 			resourceName = data.getString("ResourceName");
-			if(PRINT){
-				logger.info("resourceName: " + resourceName);
-			}
+			logger.info("resourceName: " + resourceName);
+			
 		}
-		else if(PRINT){
+		else {
 			logger.info("data returned is NULL");			
 		}
 	   
@@ -89,20 +85,18 @@ public class UriDAOJdbc implements UriDAO {
 		String versionName = "";
 		String sql = UriSQL.createSQLgetVersionIdentifierByVersionID(type, resourceName, versionID);
 	   
-		if(PRINT){
-			logger.info("getVersionIdentifierByVersionID");
-			logger.info(sql);
-		}
+		logger.info("getVersionIdentifierByVersionID");
+		logger.info(sql);
+		
 		
 		SqlRowSet data = this.jdbcTemplateObject.queryForRowSet(sql);		
 		
 		if(data.next()){
 			versionName = data.getString("VersionName");
-			if(PRINT){
-				logger.info("versionName: " + versionName);
-			}
+			logger.info("versionName: " + versionName);
+			
 		}
-		else if(PRINT){
+		else{
 			logger.info("data returned is NULL");			
 		}
 	   
@@ -115,20 +109,16 @@ public class UriDAOJdbc implements UriDAO {
 	public UriResults getURIMapByIdentifier(String type, String identifier){
 		String sql = UriSQL.createSQLgetURIMapByIdentifier(type, identifier);
 
-		if(PRINT){
-			logger.info("getURIMapByIdentifier");
-			logger.info(sql);
-		}
-		
+		logger.info("getURIMapByIdentifier");
+		logger.info(sql);
+				
 		List<UriResults> data = this.jdbcTemplateObject.query(sql, new UriResultsMapper());
 	   
 		if(!data.isEmpty()){
-			if(PRINT){
-				logger.info("data.get(0): " + data.get(0).getResourceName());
-			}
+			logger.info("data.get(0): " + data.get(0).getResourceName());
 			return data.get(0);
 		}
-		else if(PRINT){
+		else{
 			logger.info("data returned is NULL");			
 		}
 		
@@ -141,20 +131,16 @@ public class UriDAOJdbc implements UriDAO {
 	public UriResults getURIMapIdentifiers(String type, String identifier){
 		String sql = UriSQL.createSQLgetURIMapIdentifiers(type, identifier);
 		
-		if(PRINT){
-			logger.info("getURIMapIdentifiers");
-			logger.info(sql);
-		}
-		
+		logger.info("getURIMapIdentifiers");
+		logger.info(sql);
+				
 		List<UriResults> data = this.jdbcTemplateObject.query(sql, new UriResultsMapper());
 	   
 		if(!data.isEmpty()){
-			if(PRINT){
-				logger.info("data.get(0): " + data.get(0).getResourceName());
-			}
+			logger.info("data.get(0): " + data.get(0).getResourceName());
 			return data.get(0);
 		}
-		else if(PRINT){
+		else{
 			logger.info("data returned is NULL");			
 		}
 		
@@ -165,20 +151,16 @@ public class UriDAOJdbc implements UriDAO {
 	public UriResults getURIMapByVersionIdentifier(String type, String identifier, String versionID){
 		String sql = UriSQL.createSQLgetURIMapByVersionIdentifier(type, identifier, versionID);
 		
-		if(PRINT){
-			logger.info("getURIMapByVersionIdentifier");
-			logger.info(sql);
-		}
-		
+		logger.info("getURIMapByVersionIdentifier");
+		logger.info(sql);
+				
 		List<UriResults> data = this.jdbcTemplateObject.query(sql, new UriResultsMapper());
 
 		if(!data.isEmpty()){
-			if(PRINT){
-				logger.info("data.get(0): " + data.get(0).getResourceName());
-			}
+			logger.info("data.get(0): " + data.get(0).getResourceName());
 			return data.get(0);
 		}
-		else if(PRINT){
+		else{
 			logger.info("data returned is NULL");			
 		}
 		
@@ -190,20 +172,16 @@ public class UriDAOJdbc implements UriDAO {
 	public UriResults getURIMapVersionIdentifiers(String type, String identifier){
 		String sql = UriSQL.createSQLgetURIMapVersionIdentifiers(type, identifier);
 			
-		if(PRINT){
-			logger.info("getURIMapVersionIdentifiers");
-			logger.info(sql);
-		}
-		
+		logger.info("getURIMapVersionIdentifiers");
+		logger.info(sql);
+				
 		List<UriResults> data = this.jdbcTemplateObject.query(sql, new UriResultsMapper());
 	   
 		if(!data.isEmpty()){
-			if(PRINT){
-				logger.info("data.get(0): " + data.get(0).getResourceName());
-			}
+			logger.info("data.get(0): " + data.get(0).getResourceName());
 			return data.get(0);
 		}
-		else if(PRINT){
+		else{
 			logger.info("data returned is NULL");			
 		}
 		
@@ -213,9 +191,7 @@ public class UriDAOJdbc implements UriDAO {
 	@Transactional
 	@Override
 	public void saveIdentifiers(UriResults uriResults){
-		if(PRINT){
-			uriResults.logObjectData(logger);
-		}
+		logger.info(uriResults.toString());
 		
 		// check if identifier already exists
 		
@@ -249,10 +225,9 @@ public class UriDAOJdbc implements UriDAO {
 	@Override
 	public void saveVersionIdentifiers(UriResults uriResults){
 		String sql;
-		if(PRINT){
-			logger.info("saveVersionIdentifiers");
-			uriResults.logObjectData(logger);
-		}
+		logger.info("saveVersionIdentifiers");
+		logger.info(uriResults.toString());
+		
 		
 		// check if identifier already exists
 
@@ -280,11 +255,9 @@ public class UriDAOJdbc implements UriDAO {
 		
 		String sql = UriSQL.createSQLgetAllResourceNames(type);
 			
-		if(PRINT){
-			logger.info("getAllResourceNames");
-			logger.info(sql);
-		}
-		
+		logger.info("getAllResourceNames");
+		logger.info(sql);
+				
 		SqlRowSet data = this.jdbcTemplateObject.queryForRowSet(sql);
 	   		
 		while(data.next()){
@@ -303,11 +276,9 @@ public class UriDAOJdbc implements UriDAO {
 		
 		String sql = UriSQL.createSQLgetAllVersionIds(type, identifier);
 		
-		if(PRINT){
-			logger.info("getAllVersionIds");
-			logger.info(sql);
-		}
-		
+		logger.info("getAllVersionIds");
+		logger.info(sql);
+				
 		SqlRowSet data = this.jdbcTemplateObject.queryForRowSet(sql);
 	   		
 		while(data.next()){

@@ -14,28 +14,26 @@
    		<property name="ignoreResourceNotFound" value="true" />
    		<property name="locations">
    			<list>
- 				<value>classpath:database.properties</value>
-				<value>file:#{ systemProperties['user.home']}/.cts2_uri/database.properties</value>     
+ 				<value>classpath:uriresolver.properties</value>
+				<value>file:#{ systemProperties['user.home']}/.cts2_uri/uriresolver.properties</value>     
 			</list>
 		</property>		
    </bean>
    
    
-   <bean id="uriJDBCTemplate" 
-      class="edu.mayo.cts2.uriresolver.dao.UriDAOJdbc">
- <!-- 	  <property name="dataSource"  ref="dataSource" />  -->     
-   </bean>
-   
-   <!-- 
-   <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-  		<property name="dataSource" ref="dataSource"/>
+   <bean id="logDetails" 
+      class="edu.mayo.cts2.uriresolver.logging.LogDetails">
+      <property name="level" value="${log.level}" />
+      	<property name="fileLocations">
+   			<list>
+   				<value>file:"${log.filelocation}"</value>
+				<value>file:#{ systemProperties['user.home']}/.cts2_uri/uriresolver.log</value>     
+ 				<value>classpath:uriresolver.log</value>
+			</list>
+      	</property>
    </bean>
 
-   <bean id="txManagerH2" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-  		<property name="dataSource" ref="h2DataSource"/>
-   </bean>
- -->
- 	<bean id="databaseSecurity"
+  	<bean id="databaseSecurity"
       class="edu.mayo.cts2.uriresolver.security.DatabaseSecurity">
  		<property name="dbEditable" value="${db.editable}" />
       	<property name="fileLocations">
@@ -46,6 +44,10 @@
       	</property>
  	</bean>
  
+   <bean id="uriJDBCTemplate" 
+      class="edu.mayo.cts2.uriresolver.dao.UriDAOJdbc">
+   </bean>
+   
    <bean id="dataSource" 
       class="org.springframework.jdbc.datasource.DriverManagerDataSource">
       <property name="driverClassName" value="${jdbc.driverClassName}" />

@@ -1,8 +1,9 @@
 package edu.mayo.cts2.uriresolver.dao;
-import static edu.mayo.cts2.uriresolver.constants.UriResolverConstants.NULL_VALUE;
+
 import edu.mayo.cts2.uriresolver.beans.UriResults;
 
 public class UriSQL {
+	public static final String NULL_VALUE = "null";
 	
 	public static String sqlSELECTBaseFieldsFromUMTable(){
 		String sql = "SELECT ";

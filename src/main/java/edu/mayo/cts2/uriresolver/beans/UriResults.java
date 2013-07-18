@@ -2,7 +2,6 @@ package edu.mayo.cts2.uriresolver.beans;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
@@ -50,7 +49,7 @@ public class UriResults {
 		this.ids = ids;
 	}
 
-	public void logObjectData(Logger logger){
+	public String toString(){
 		String baseEntityURI = getBaseEntityURI();
 		List<String> identifierList = getIds();
 		String resourceName = getResourceName();
@@ -68,7 +67,7 @@ public class UriResults {
 			}
 		}
 		
-		logger.info(baseEntityURI + ", " + resourceName + ", " + resourceType + ", " + resourceURI + ", " + versionOf + ids);
+		return baseEntityURI + ", " + resourceName + ", " + resourceType + ", " + resourceURI + ", " + versionOf + ", " + ids;
 	}
 
 }
