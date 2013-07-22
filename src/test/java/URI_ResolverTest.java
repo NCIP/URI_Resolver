@@ -38,71 +38,139 @@ public class URI_ResolverTest {
 		private MockMvc mockMvc;
 		private static final boolean PRINT = false;
 		
-		private final static String [] INPUT_URL = {
-			"/id/CODE_SYSTEM?id=rdf",
+		private static final int INPUT_URL = 0;
+		private static final int REDIRECTED_URL = 1;
+		private static final int RETURNED_STATUS = 2;
+		
+		private final static String [][] TEST_DATA = {
+			// ------------ /id/<RESOURCE_TYPE>?id=<ID> -------------------
+			{"/id/CODE_SYSTEM?id=rdf", "/id/CODE_SYSTEM/rdf", "302"},									
+			{"/id/CODE_SYSTEM?id=AIR", "/id/CODE_SYSTEM/AIR", "302"},									
+			{"/id/CODE_SYSTEM?id=AI/RHEUM", "/id/CODE_SYSTEM/AIR", "302"},								
+			{"/id/CODE_SYSTEM?id=http://id.nlm.nih.gov/cui/C1140091", "/id/CODE_SYSTEM/AIR", "302"},	
+			{"/id/CODE_SYSTEM?id=X12.3", "/id/CODE_SYSTEM/X12.3", "302"}, 									
+			//
+			{"/id/VALUE_SET?id=Abenakian", "/id/VALUE_SET/Abenakian", "302"}, 								
+
 			
-			// --
-//			"/id/CODE_SYSTEM?id=AIR",
-//			"/id/CODE_SYSTEM?id=AI/RHEUM",
-//			"/id/CODE_SYSTEM?id=http://id.nlm.nih.gov/cui/C1140091",
-//			"/id/CODE_SYSTEM?id=X12.3",
-//			"/id/VALUE_SET?id=Abenakian",
-			// --
 			
-			"/version/CODE_SYSTEM/AIR?version=1993",
-			"/version/CODE_SYSTEM/AIR/1993",
-			"/id/CODE_SYSTEM/rdf",
-			"/ids/CODE_SYSTEM/AIR",
-			"/versions/CODE_SYSTEM_VERSION/AIR93"
+			// ------------ /id/<RESOURCE_TYPE>/<IDENTIFIER> -------------------
+			{"/id/CODE_SYSTEM/rdf", null, "400"},
+			{"/id/CODE_SYSTEM/AIR", null, "400"},  
+			{"/id/CODE_SYSTEM/AIR/RHEUM", null, "402"},								
+			{"/id/CODE_SYSTEM/id=http://id.nlm.nih.gov/cui/C1140091", null, "402"},	
+			{"/id/CODE_SYSTEM/X12.3", null, "400"},
+			// --
+			{"/id/CODE_SYSTEM_VERSION/AIR93", null, "400"},
+			{"/id/CODE_SYSTEM_VERSION/X12.3_2.40.5", null, "400"},
+			//
+			{"/id/VALUE_SET/Abenakian", null, "400"},
+			
+			
+			// ------------ /ids/<RESOURCE_TYPE>/<IDENTIFIER> -------------------
+			{"/ids/CODE_SYSTEM/rdf", null, "400"},
+			{"/ids/CODE_SYSTEM/AIR", null, "400"},
+			{"/ids/CODE_SYSTEM/X12.3", null, "400"},
+			//
+			{"/ids/CODE_SYSTEM_VERSION/AIR93", null, "400"},
+			{"/ids/CODE_SYSTEM_VERSION/X12.3_2.40.5", null, "400"},
+			//
+			{"/ids/VALUE_SET/ActAccountCode", null, "400"},
+
+			
+			// ------------ /version/<RESOURCE_TYPE>/<IDENTIFIER>?version=<VERSION> -------------------
+			// ------------ /version/<RESOURCE_TYPE>/<IDENTIFIER>/<VERSION> -------------------
+			{"/version/CODE_SYSTEM/AIR?version=1993", "/versions/CODE_SYSTEM_VERSION/AIR93", "302"},
+			{"/version/CODE_SYSTEM/AIR/1993", "/versions/CODE_SYSTEM_VERSION/AIR93", "302"},
+			//
+			{"/version/CODE_SYSTEM/X12.3?version=2.40.5", "/versions/CODE_SYSTEM_VERSION/X12.3_2.40.5", "302"},
+			{"/version/CODE_SYSTEM/X12.3/2.40.5", "/versions/CODE_SYSTEM_VERSION/X12.3_2.40.5", "302"},
+			
+			
+			// ------------ /versions/<RESOURCE_TYPE>/<IDENTIFIER> -------------------
+			{"/versions/CODE_SYSTEM_VERSION/AIR93", null, "400"},
+			{"/versions/CODE_SYSTEM_VERSION/X12.3_2.40.5", null, "400"},
+			//
+			{"/versions/VALUE_SET/ActAccountCode", null, "400"}			
 		};
 		
-		private final static String [] REDIRECTED_URL = {
-			"/id/CODE_SYSTEM/rdf",
-			"/versions/CODE_SYSTEM_VERSION/AIR93",
-			"/versions/CODE_SYSTEM_VERSION/AIR93",
-			null,
-			null,
-			null
-		};
-			
-		private final static int [] RETURNED_STATUS = {
-			302,
-			302,
-			302,
-			400,
-			400,
-			400
-		};
-			
+						
 		private final static String [] JSON_FIELDS = {
 			"resourceType",
 			"resourceName",
 			"resourceURI",
-			"baseEntityURI"
-//			"ids"
+			"baseEntityURI",
+			"versionOf"
+		};
+
+		private final static String [][] JSON_VALUES = {
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+						
+			// --
+			{"CODE_SYSTEM", "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "http://www.w3.org/1999/02/22-rdf-syntax-ns#", null},
+			{"CODE_SYSTEM", "AIR", "http://id.nlm.nih.gov/cui/C1140091", "http://id.nlm.nih.gov/cui/C1140091/", null},
+			null,
+			null,
+			{"CODE_SYSTEM", "X12.3", "urn:oid:2.16.840.1.113883.6.255", "http://id.hl7.org/codesystem/X12.3/", null},
+			{"CODE_SYSTEM_VERSION",	"AIR93", "http://id.nlm.nih.gov/cui/C1140092", null, null},
+			{"CODE_SYSTEM_VERSION", "X12.3_2.40.5", "http://id.hl7.org/codesystem/X12.3/version/2.40.5", null, null},
+			{"VALUE_SET", "Abenakian", "urn:oid:2.16.840.1.113883.11.18174", null, null},
+			
+			
+			// --
+			{"CODE_SYSTEM", "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "http://www.w3.org/1999/02/22-rdf-syntax-ns#", null},
+			{"CODE_SYSTEM", "AIR", "http://id.nlm.nih.gov/cui/C1140091", "http://id.nlm.nih.gov/cui/C1140091/", null},
+			{"CODE_SYSTEM", "X12.3", "urn:oid:2.16.840.1.113883.6.255", "http://id.hl7.org/codesystem/X12.3/", null},
+			{"CODE_SYSTEM_VERSION", "AIR93", "http://id.nlm.nih.gov/cui/C1140092", null, null},
+			{"CODE_SYSTEM_VERSION", "X12.3_2.40.5", "http://id.hl7.org/codesystem/X12.3/version/2.40.5", null, null},
+			{"VALUE_SET", "ActAccountCode", "urn:oid:2.16.840.1.113883.11.14809", null, null},
+			
+			// --
+			null,
+			null,
+			null,
+			null,
+			{"CODE_SYSTEM_VERSION", "AIR93", "http://id.nlm.nih.gov/cui/C1140092", null, "AIR"},
+			{"CODE_SYSTEM_VERSION", "X12.3_2.40.5", "http://id.hl7.org/codesystem/X12.3/version/2.40.5", null, "X12.3"},
+			{"VALUE_SET", "ActAccountCode", "urn:oid:2.16.840.1.113883.11.14809", null, null},
 		};
 		
+		
+
 		private final static String [][] JSON_IDS = {
 			null,
 			null,
 			null,
 			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			{"http://www.w3.org/1999/02/22-rdf-syntax-ns#","rdf"},
 			{"AI/RHEUM","AIR","http://id.nlm.nih.gov/cui/C1140091"},
-			{"1993","AIR93"}
+			{"2.16.840.1.113883.6.255","http://id.hl7.org/codesystem/X12.3","urn:oid:2.16.840.1.113883.6.255","X12.3"},
+			null,
+			null,
+			{"2.16.840.1.113883.11.14809","ActAccountCode","urn:oid:2.16.840.1.113883.11.14809"},
+			{"1993","AIR93"},
+			{"1993","AIR93"},
+			{"1","2.40.5"},
+			{"1","2.40.5"},
+			{"1993","AIR93"},
+			{"1","2.40.5"},
+			null
 		};
-		
-//		{"resourceType":"CODE_SYSTEM","resourceName":"rdf","resourceURI":"http://www.w3.org/1999/02/22-rdf-syntax-ns#","baseEntityURI":"http://www.w3.org/1999/02/22-rdf-syntax-ns#"}
-//		{"resourceType":"CODE_SYSTEM","resourceName":"AIR","resourceURI":"http://id.nlm.nih.gov/cui/C1140091","baseEntityURI":"http://id.nlm.nih.gov/cui/C1140091/","identifiers":["AI/RHEUM","AIR","http://id.nlm.nih.gov/cui/C1140091"]}
-//		{"resourceType":"CODE_SYSTEM_VERSION","resourceName":"AIR93","resourceURI":"http://id.nlm.nih.gov/cui/C1140092"}
-		private final static String [][] JSON_VALUES = {
-			null,
-			null,
-			null,
-			{"CODE_SYSTEM", "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "http://www.w3.org/1999/02/22-rdf-syntax-ns#"},
-			{"CODE_SYSTEM", "AIR", "http://id.nlm.nih.gov/cui/C1140091", "http://id.nlm.nih.gov/cui/C1140091/"},
-			{"CODE_SYSTEM_VERSION", "AIR93", "http://id.nlm.nih.gov/cui/C1140092", null},
-		};
-		
 		
 
 	
@@ -118,36 +186,28 @@ public class URI_ResolverTest {
 
 		@Test
 		public void testJSONStatusOK() throws Exception {	 
-			for(int i=0; i < INPUT_URL.length; i++){
-				logger.info("CHECKING FOR VALID RETURNED STATUS: " + REDIRECTED_URL[i] + ", " + RETURNED_STATUS[i]);
-				if(RETURNED_STATUS[i] == 400){
-					mockMvc.perform( get(INPUT_URL[i]).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+			for(int i=0; i < TEST_DATA.length; i++){
+				logger.info("CHECKING FOR VALID RETURNED STATUS: " + TEST_DATA[i][REDIRECTED_URL] + ", " + TEST_DATA[i][RETURNED_STATUS]);
+				if(TEST_DATA[i][RETURNED_STATUS].equals("400")){  // Succeeded
+					mockMvc.perform( get(TEST_DATA[i][INPUT_URL]).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
 				}
-				else if(RETURNED_STATUS[i] == 302){
-					mockMvc.perform( get(INPUT_URL[i]).accept(MediaType.APPLICATION_JSON)).andExpect(status().isFound());
+				else if(TEST_DATA[i][RETURNED_STATUS].equals("302")){  // Redirect
+					mockMvc.perform( get(TEST_DATA[i][INPUT_URL]).accept(MediaType.APPLICATION_JSON)).andExpect(status().isFound());
+				}
+				else if(TEST_DATA[i][RETURNED_STATUS].equals("404")){  // Failed
+					mockMvc.perform( get(TEST_DATA[i][INPUT_URL]).accept(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
 				}
 			}
 		}    
 
-		
-		@Test
-		public void testPrintAll() throws Exception {
-			if(PRINT){
-				for(int i=0; i < INPUT_URL.length; i++){ 
-					logger.info("--------- Response " + i);
-					mockMvc.perform( get(INPUT_URL[0]).accept(MediaType.APPLICATION_JSON)).andDo(print());
-				}
-			}				
-		}
-		
-		
+				
 		@Test
 		public void testJSONRedirects() throws Exception {	 
 			
-			for(int i=0; i < INPUT_URL.length; i++){ 
-				if(REDIRECTED_URL[i] != null){
-					mockMvc.perform( get(INPUT_URL[i]).accept(MediaType.APPLICATION_JSON))
-						.andExpect(redirectedUrl(REDIRECTED_URL[i]));
+			for(int i=0; i < TEST_DATA.length; i++){ 
+				if(TEST_DATA[i][REDIRECTED_URL] != null){
+					mockMvc.perform( get(TEST_DATA[i][INPUT_URL]).accept(MediaType.APPLICATION_JSON))
+						.andExpect(redirectedUrl(TEST_DATA[i][REDIRECTED_URL]));
 				}
 			}
 		}    
@@ -155,11 +215,10 @@ public class URI_ResolverTest {
 		
 		@Test
 		public void testJSONContentType() throws Exception {	 
-			for(int i=0; i < INPUT_URL.length; i++){
-				if(REDIRECTED_URL[i] == null){
-					logger.info(INPUT_URL[i]);
-					
-					mockMvc.perform( get(INPUT_URL[i]).accept(MediaType.APPLICATION_JSON)).andExpect(content().contentType("application/json"));
+			for(int i=0; i < TEST_DATA.length; i++){
+				if(mockMvc.perform( get(TEST_DATA[i][INPUT_URL])).andReturn().getResponse().getStatus() == 400){
+					logger.info(TEST_DATA[i][INPUT_URL]);
+					mockMvc.perform( get(TEST_DATA[i][INPUT_URL]).accept(MediaType.APPLICATION_JSON)).andExpect(content().contentType("application/json"));
 				}
 			}
 		}    
@@ -168,9 +227,9 @@ public class URI_ResolverTest {
 
 		@Test
 		public void testJSONValues() throws Exception {	
-			for(int i=0; i < INPUT_URL.length; i++){ 
+			for(int i=0; i < TEST_DATA.length; i++){ 
 				if(JSON_VALUES[i] != null){
-					ResultActions results = mockMvc.perform(get(INPUT_URL[i]).accept(MediaType.APPLICATION_JSON));
+					ResultActions results = mockMvc.perform(get(TEST_DATA[i][INPUT_URL]).accept(MediaType.APPLICATION_JSON));
 					for(int j=0; j < JSON_FIELDS.length; j++){
 						if(JSON_VALUES[i][j] != null){
 							results.andExpect(jsonPath(JSON_FIELDS[j]).value(JSON_VALUES[i][j]));
