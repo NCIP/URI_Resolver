@@ -27,7 +27,7 @@ public class UriResultsMapper implements RowMapper<UriResults>{
 			while(rs.next()){
 				ids.add(rs.getString("id"));			
 			}
-			uriData.setIds(ids );
+			uriData.setIdentifiers(ids );
 		}
 		
 

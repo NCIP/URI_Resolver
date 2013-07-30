@@ -267,7 +267,7 @@
  "resourceName":"rdf",
  "resourceURI":"http://www.w3.org/1999/02/22-rdf-syntax-ns#",
  "baseEntityURI":"http://www.w3.org/1999/02/22-rdf-syntax-ns#",
- "ids":["http://www.w3.org/1999/02/22-rdf-syntax-ns#","rdf"]
+ "identifiers":["http://www.w3.org/1999/02/22-rdf-syntax-ns#","rdf"]
 }
 </pre>
 		</td>
@@ -285,7 +285,7 @@
  "resourceName":"AIR",
  "resourceURI":"http://id.nlm.nih.gov/cui/C1140091",
  "baseEntityURI":"http://id.nlm.nih.gov/cui/C1140091/",
- "ids":["AI/RHEUM","AIR","http://id.nlm.nih.gov/cui/C1140091"]
+ "identifiers":["AI/RHEUM","AIR","http://id.nlm.nih.gov/cui/C1140091"]
 }
 </pre>
 		</td>
@@ -303,7 +303,7 @@
  "resourceName":"X12.3",
  "resourceURI":"urn:oid:2.16.840.1.113883.6.255",
  "baseEntityURI":"http://id.hl7.org/codesystem/X12.3/",
- "ids":["2.16.840.1.113883.6.255","http://id.hl7.org/codesystem/X12.3","urn:oid:2.16.840.1.113883.6.255","X12.3"]
+ "identifiers":["2.16.840.1.113883.6.255","http://id.hl7.org/codesystem/X12.3","urn:oid:2.16.840.1.113883.6.255","X12.3"]
 }
 </pre>
 		</td>
@@ -356,7 +356,7 @@
  "resourceType":"VALUE_SET",
  "resourceName":"ActAccountCode",
  "resourceURI":"urn:oid:2.16.840.1.113883.11.14809",
- "ids":["2.16.840.1.113883.11.14809","ActAccountCode","urn:oid:2.16.840.1.113883.11.14809"]
+ "identifiers":["2.16.840.1.113883.11.14809","ActAccountCode","urn:oid:2.16.840.1.113883.11.14809"]
 }
 </pre>
 		</td>
@@ -393,7 +393,7 @@
  "resourceName":"AIR93",
  "resourceURI":"http://id.nlm.nih.gov/cui/C1140092",
  "versionOf":"AIR",
- "ids":["1993","AIR93"]
+ "identifiers":["1993","AIR93"]
 }
 </pre>
 		</td>
@@ -410,7 +410,7 @@
 "resourceName":"AIR93",
 "resourceURI":"http://id.nlm.nih.gov/cui/C1140092",
 "versionOf":"AIR",
-"ids":["1993","AIR93"]
+"identifiers":["1993","AIR93"]
 }
 </pre>
 		</td>
@@ -430,7 +430,7 @@
  "resourceName":"X12.3_2.40.5",
  "resourceURI":"http://id.hl7.org/codesystem/X12.3/version/2.40.5",
  "versionOf":"X12.3",
- "ids":["1","2.40.5"]
+ "identifiers":["1","2.40.5"]
 }
 </pre>
 		</td>
@@ -446,7 +446,7 @@
  "resourceName":"X12.3_2.40.5",
  "resourceURI":"http://id.hl7.org/codesystem/X12.3/version/2.40.5",
  "versionOf":"X12.3",
- "ids":["1","2.40.5"]
+ "identifiers":["1","2.40.5"]
 }
 </pre>
 </table><br/><br/>
@@ -470,7 +470,7 @@
  "resourceName":"AIR93",
  "resourceURI":"http://id.nlm.nih.gov/cui/C1140092",
  "versionOf":"AIR",
- "ids":["1993","AIR93"]
+ "identifiers":["1993","AIR93"]
 }
 </pre>
 		</td>
@@ -489,7 +489,7 @@
  "resourceName":"X12.3_2.40.5",
  "resourceURI":"http://id.hl7.org/codesystem/X12.3/version/2.40.5",
  "versionOf":"X12.3",
- "ids":["1","2.40.5"]
+ "identifiers":["1","2.40.5"]
 }
 </pre>
 		</td>

@@ -11,7 +11,7 @@ public class UriResults {
 	private String resourceURI;
 	private String baseEntityURI;
 	private String versionOf;
-	private List<String> ids;
+	private List<String> identifiers;
 	public String getResourceType() {
 		return resourceType;
 	}
@@ -27,8 +27,8 @@ public class UriResults {
 	public String getVersionOf() {
 		return versionOf;
 	}
-	public List<String> getIds() {
-		return ids;
+	public List<String> getIdentifiers() {
+		return identifiers;
 	}
 	public void setResourceType(String resourceType) {
 		this.resourceType = resourceType;
@@ -45,13 +45,13 @@ public class UriResults {
 	public void setVersionOf(String versionOf) {
 		this.versionOf = versionOf;
 	}
-	public void setIds(List<String> ids) {
-		this.ids = ids;
+	public void setIdentifiers(List<String> identifiers) {
+		this.identifiers = identifiers;
 	}
 
 	public String toString(){
 		String baseEntityURI = getBaseEntityURI();
-		List<String> identifierList = getIds();
+		List<String> identifierList = getIdentifiers();
 		String resourceName = getResourceName();
 		String resourceType = getResourceType();
 		String resourceURI = getResourceURI();

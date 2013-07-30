@@ -206,8 +206,8 @@ public class UriDAOJdbc implements UriDAO {
 		this.jdbcTemplateObject.update(sql);
 
 		// Insert identifiers to identifermap
-		if(uriResults.getIds() != null){
-			for(String identifier : uriResults.getIds()){
+		if(uriResults.getIdentifiers() != null){
+			for(String identifier : uriResults.getIdentifiers()){
 				sql = UriSQL.createSQLsaveIdentifiersIdentifierMap(uriResults, identifier);
 				this.jdbcTemplateObject.update(sql);
 			}
@@ -240,8 +240,8 @@ public class UriDAOJdbc implements UriDAO {
 
 		
 		// Insert identifiers to versionmap
-		if(uriResults.getIds() != null){
-			for(String identifier : uriResults.getIds()){
+		if(uriResults.getIdentifiers() != null){
+			for(String identifier : uriResults.getIdentifiers()){
 				sql = UriSQL.createSQLsaveVersionIdentifiersVersionMap(uriResults, identifier);
 				this.jdbcTemplateObject.update(sql);
 			}

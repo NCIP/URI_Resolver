@@ -218,8 +218,8 @@
                     $('#inputUriMapVersionOf').val(data.versionOf);
 
 					clearIdentifiers();                    
-                    for(i in data.ids){
-                        addIdentifier(data.ids[i]);
+                    for(i in data.identifiers){
+                        addIdentifier(data.identifiers[i]);
                     }
                 }
             });
@@ -251,13 +251,13 @@
                     resourceName : $('#inputUriMapVersionName').val(),
                     resourceURI : $('#inputUriMapVersionUri').val(),
                     versionOf : $('#inputUriMapVersionOf').val(),
-                    ids : []
+                    identifiers : []
                 };
 
                 $('.identifierInput').each(function(){
                     var val = $(this).val();
                     if(val && val != ''){
-                        json.ids.push($(this).val());
+                        json.identifiers.push($(this).val());
                     }
                 });
 
