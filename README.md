@@ -1,27 +1,32 @@
 URI Resolver REST Interface For CTS2
 ====================================
- 
-Install
--------
+
+Table of Contents
+-----------------
+* [Installation Overview](#installation_overview)
+* [Configure Database Connection Values](#db_connection)
+* [Configure User Accounts](#user_accounts)
+* [Errors/Warning](#errors_warnings)
+
+##<a name="installation_overview"></a>Installation Overview
 1. Install war file, <code>URI_Resolver-0.0.1-SNAPSHOT.war</code> to JBOSS or Tomcat server.
 2. Configure database connection values (see below)
-3. Test sample using url: [http://localhost/URI_Resolver-0.0.1.SNAPSHOT](http://localhost/URI_Resolver-0.0.1.SNAPSHOT)
+3. Configure user accounts (see below)
+4. Test sample using url: [http://localhost/URI_Resolver-0.0.1.SNAPSHOT](http://localhost/URI_Resolver-0.0.1.SNAPSHOT)
 
-Configure Database Connection Values
-------------------------------------
+##<a name="db_connection"></a>Configure Database Connection Values
 ##### To use default database connection values
 1. Install MySQL server on the local machine to run on port 3306
 2. Create a MySQL account: `uriuser` with the password `uriuser`
-3. Create a MySQL database named `uriresolver`, give `uriuser` permissions to write to this database.
+3. Create a MySQL database named `uriresolver`, give uriuser permissions to write to this database.
 4. Download `uriresolver.sql` from github project. File is located in [src/main/resources](https://github.com/cts2/URI_Resolver/tree/master/src/main/resources)
-5. Create database `uriresolver`.
-6. Using MySQL, import data from the `uriresolver.sql` export file into the `uriresolver` database
+5. Using MySQL, import data from the uriresolver.sql export file into the uriresolver database
 
 ##### To use user specified database connection values
 1. Create a folder: `<USER_HOME>/.cts2_uri`
 	* USER_HOME refers to the home directory of the account running JBOSS server (i.e. user will be `jboss` if running on ubuntu)
-2. Create a file: `uriresolver.properties` and store this file in the `.cts2_uri` folder
-3. Edit `uriresolver.properties` to contain the following:
+2. Create a file: `uriresolver.properties` and store this file in the USER_HOME/.cts2_uri folder
+3. Edit uriresolver.properties to contain the following:
 <pre><code>db.driverClassName=\<Driver for database\>
 db.url=\<URL to connect to database\>
 db.username=\<Database username\>
@@ -30,7 +35,7 @@ db.editable=false
 log.level=0
 log.filelocation=
 </code></pre>
-4. Example `uriresolver.properties`:
+4. Example uriresolver.properties file:
 <pre><code>jdbc.driverClassName=com.mysql.jdbc.Driver
 db.url=jdbc:mysql://localhost:3306/uriresolver
 db.username=uriuser
@@ -45,9 +50,23 @@ An in-memory database will be utilized if the two previous options are not avail
 Nothing is required to configure this database.  It will only exist during the REST connection.
 	
 
-Errors & Warnings
------------------
+##<a name="user_accounts"></a>Configure User Accounts
+##### To use default user accounts
+1. Create the uriresolver.properties file, described above, and set db.editable to true.
+2. By default one account will be available with `cts2/mayo+nih` as the username/password.  
 
+##### To use user specified user accounts
+1. Create the uriresolver.properties file, described above, and set db.editable to true.
+2. Create `user.properties` (save in USER_HOME/.cts2_uri folder)
+3. Enter username/passwords in user.properties file, one per line with a space seperating the username/password.
+4. Example user.properties file:
+<pre><code>jdoe abcd1234
+bspringsteen born2run
+</code></pre>
+5. If USER_HOME/.cts2_uri/user.properties file exist then only accounts listed in this file will be enabled.
+The default cts2 account, mentioned above, will not be enabled.
+
+##<a name="errors_warnings"></a>Errors & Warnings
 ###MySQL Errors
     13:06:52,434 ERROR [edu.mayo.cts2.uriresolver.dao.UriJDBCTemplate] (http--0.0.0.0-8180-1) Error connecting to data source: Access denied for user 'uriuser'@'localhost' (using password: YES)
     13:06:52,438 ERROR [edu.mayo.cts2.uriresolver.controller.ResolveURI] (http--0.0.0.0-8180-1) Unknown error while checking tables exist: Access denied for user 'uriuser'@'localhost' (using password: YES)
