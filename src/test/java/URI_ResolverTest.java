@@ -4,7 +4,7 @@
 * triple-shield Mayo logo are trademarks and service marks of MFMER.
 *
 * Distributed under the OSI-approved BSD 3-Clause License.
-* See http://ncip.github.com/lexevs-service/LICENSE.txt for details.
+* See http://ncip.github.com/URI_Resolver/LICENSE.txt for details.
 */
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
