@@ -115,7 +115,10 @@ path name="com/sun/rowset/providers/"
 * If this does not correct the error then download `rowset` jar file from Oracle sun website and extract to `$JBOSS_HOME/modules/com/sun/rowset`
 
 
-
+### You will find more details in the following links:
+*  https://tracker.nci.nih.gov/browse/LEXEVS
+*  https://wiki.nci.nih.gov/display/EVS/LexEVS+Servers+and+APIs+Summary
+*  https://github.com/NCIP/URI_Resolver>
 
 
 
