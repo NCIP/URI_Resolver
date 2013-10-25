@@ -3,6 +3,7 @@
 -- Host: infsql    Database: uriresolver
 -- ------------------------------------------------------
 -- Server version	5.1.69-0ubuntu0.10.04.1
+-- BSD 3-Clause License`: http://opensource.org/licenses/BSD-3-Clause
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;

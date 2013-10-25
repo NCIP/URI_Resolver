@@ -116,9 +116,9 @@ path name="com/sun/rowset/providers/"
 
 
 ### You will find more details in the following links:
-*  https://tracker.nci.nih.gov/browse/LEXEVS
-*  https://wiki.nci.nih.gov/display/EVS/LexEVS+Servers+and+APIs+Summary
-*  https://github.com/NCIP/URI_Resolver>
+*  [LexEVS Home](https://tracker.nci.nih.gov/browse/LEXEVS)
+*  [LexEVS Servers and API's](https://wiki.nci.nih.gov/x/0BwhAQ)
+*  [Source Code](https://github.com/NCIP/URI_Resolver>)
 
 
 
