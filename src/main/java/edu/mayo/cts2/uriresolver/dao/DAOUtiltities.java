@@ -105,7 +105,7 @@ public class DAOUtiltities {
 			}	
 			con.close();
 		} catch (SQLException e) {
-			logger.error("Unknown error while checking tables exist: " + e.getMessage());
+			logger.error("Unknown error while checking tables exist, check all connection values");
 			return false;
 		} finally {
 			try {
