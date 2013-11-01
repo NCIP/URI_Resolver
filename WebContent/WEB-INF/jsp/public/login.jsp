@@ -33,7 +33,7 @@
 		</div>
 	</c:if>
  
-	<form name='f' action="<c:url value='/j_spring_security_check' />"
+<!--	<form name='f' action="<c:url value='/j_spring_security_check' />"
 		method='POST'>
  
 		<h4>To edit the database you must log in: </h4>
@@ -61,7 +61,7 @@
 	
    
 	<c:url value="/j_spring_security_logout" var="logoutUrl" />
-	<a href="${logoutUrl}">Log Out</a>
+	<a href="${logoutUrl}">Log Out</a> -->
 	
 	
 </body>

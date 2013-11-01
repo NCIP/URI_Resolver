@@ -39,13 +39,13 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
 			/WEB-INF/uri_resolver-servlet.xml,
-			/WEB-INF/spring-security.xml
+<!--  			/WEB-INF/spring-security.xml-->
 		</param-value>
 	</context-param>
  
 	<!-- Spring Security -->
 	
-	<filter>
+<!-- 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<filter-class>
                   org.springframework.web.filter.DelegatingFilterProxy
@@ -55,6 +55,6 @@
 	<filter-mapping>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+	</filter-mapping> -->
 	
 </web-app>

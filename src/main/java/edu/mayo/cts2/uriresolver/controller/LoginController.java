@@ -36,19 +36,19 @@ public class LoginController {
 		return new ModelAndView("redirect:/");
  	}
 
-	@RequestMapping(value="/admin_pages/authenticated", method = RequestMethod.GET)
+//	@RequestMapping(value="/admin_pages/authenticated", method = RequestMethod.GET)
 	public String authenticated(ModelMap model, Principal principal ) {
 		logger.info("authenticated");
 		return "admin_pages/edit";
  	}
 
-	@RequestMapping(value="/admin_pages/versionEdit", method = RequestMethod.GET)
+//	@RequestMapping(value="/admin_pages/versionEdit", method = RequestMethod.GET)
 	public String versionEdit(ModelMap model, Principal principal ) {
 		logger.info("versionEdit");
 		return "admin_pages/admin_version";
  	}
 
-	@RequestMapping(value="/admin_pages/identifierEdit", method = RequestMethod.GET)
+//	@RequestMapping(value="/admin_pages/identifierEdit", method = RequestMethod.GET)
 	public String identifierEdit(ModelMap model, Principal principal ) {
 		logger.info("identifierEdit");
 		return "admin_pages/admin_id";
@@ -61,7 +61,7 @@ public class LoginController {
 		return new ModelAndView("redirect:/");
 	}
 
-	@RequestMapping(value="/public/loginfailed", method = RequestMethod.GET)
+//	@RequestMapping(value="/public/loginfailed", method = RequestMethod.GET)
 	public String loginfailed(ModelMap model) {
 		logger.info("loginfailed");
  
@@ -78,14 +78,14 @@ public class LoginController {
 		return "public/demoPage";
 	}
 
-	@RequestMapping(value="/public/logout", method = RequestMethod.GET)
+//	@RequestMapping(value="/public/logout", method = RequestMethod.GET)
 	public ModelAndView logout(ModelMap model) {
 		logger.info("logout");
 
 		return new ModelAndView("redirect:/");
 	}
 	
-	@RequestMapping(value="/public/accessDenied", method = RequestMethod.GET)
+//	@RequestMapping(value="/public/accessDenied", method = RequestMethod.GET)
 	public String accessDenied(ModelMap model) {
 		logger.info("accessDenied");
 

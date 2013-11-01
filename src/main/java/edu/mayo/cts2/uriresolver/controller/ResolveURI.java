@@ -37,7 +37,7 @@ public class ResolveURI {
 	private static final String ID = "id";
 	private static final String VERSION = "version";
 	
-	@RequestMapping(method=RequestMethod.PUT, value="/versions/{type}/{identifier}")
+	//@RequestMapping(method=RequestMethod.PUT, value="/versions/{type}/{identifier}")
 	public ResponseEntity<String> saveVersionIdentifiers(@RequestBody UriResults uriResults, @PathVariable String type, @PathVariable String identifier){
 		logger.info("\n\nsaveVersionIdentifiers\n\n");
 		uriDAO.saveVersionIdentifiers(uriResults);
@@ -45,7 +45,7 @@ public class ResolveURI {
 		return new ResponseEntity<String>(new HttpHeaders(), HttpStatus.OK);
 	}
 	
-	@RequestMapping(method=RequestMethod.PUT, value="/ids/{type}/{identifier}")
+	//@RequestMapping(method=RequestMethod.PUT, value="/ids/{type}/{identifier}")
 	public ResponseEntity<String> saveIdentifiers(@RequestBody UriResults uriResults, @PathVariable String type, @PathVariable String identifier){
 		logger.info("\n\nsaveIdentifiers\n\n");
 		uriDAO.saveIdentifiers(uriResults);
