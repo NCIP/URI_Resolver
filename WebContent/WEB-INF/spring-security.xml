@@ -39,9 +39,9 @@
 
 
  
-<!-- 	<authentication-manager>
+ 	<authentication-manager>
 	  <authentication-provider user-service-ref="myUserDetailService" />
-	</authentication-manager> -->
+	</authentication-manager>
 	
 <!-- 	<authentication-manager> -->
 <!-- 	  <authentication-provider> -->
