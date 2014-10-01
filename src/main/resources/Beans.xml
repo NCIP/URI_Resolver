@@ -48,6 +48,9 @@
       class="edu.mayo.cts2.uriresolver.dao.UriDAOJdbc">
    </bean>
    
+     <bean id="uriJDBCSecureTemplate" 
+      class="edu.mayo.cts2.uriresolver.dao.UriDAOSecure">
+   </bean>
    <bean id="dataSource" 
       class="org.springframework.jdbc.datasource.DriverManagerDataSource">
       <property name="driverClassName" value="${db.driverClassName}" />

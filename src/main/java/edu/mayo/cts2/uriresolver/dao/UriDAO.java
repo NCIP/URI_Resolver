@@ -8,6 +8,8 @@
 */
 package edu.mayo.cts2.uriresolver.dao;
 
+import java.sql.SQLException;
+
 import javax.sql.DataSource;
 
 import edu.mayo.cts2.uriresolver.beans.UriResourceNames;
