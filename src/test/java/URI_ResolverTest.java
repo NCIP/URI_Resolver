@@ -247,13 +247,13 @@ public class URI_ResolverTest {
 						}
 						
 						if(JSON_IDS[i] != null){
-							results.andExpect(jsonPath("ids").isArray());
+							results.andExpect(jsonPath("identifiers").isArray());
 							for(int k=0; k < JSON_IDS[i].length; k++){
-								results.andExpect(jsonPath("ids[" + k + "]").value(JSON_IDS[i][k]));
+								results.andExpect(jsonPath("identifiers[" + k + "]").value(JSON_IDS[i][k]));
 							}
 						}
 						else{
-							results.andExpect(jsonPath("ids").doesNotExist());
+							results.andExpect(jsonPath("identifiers").doesNotExist());
 						}
 					}
 					results.andDo(print());

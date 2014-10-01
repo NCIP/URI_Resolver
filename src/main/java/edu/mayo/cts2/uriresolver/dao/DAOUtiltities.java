@@ -43,7 +43,7 @@ public class DAOUtiltities {
 		boolean inMemoryDBrequired = false;
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
 		
-		uriDAO = (UriDAOJdbc) context.getBean("uriJDBCTemplate");
+		uriDAO = (UriDAOSecure) context.getBean("uriJDBCSecureTemplate");
 		ds = (DataSource) context.getBean("dataSource");
 		context.close();
 
