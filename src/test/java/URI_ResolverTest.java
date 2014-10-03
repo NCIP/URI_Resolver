@@ -180,7 +180,11 @@ public class URI_ResolverTest {
 			null
 		};
 		
-
+		private final static String [][] TEST_SQL_INJ = { 
+			{"/id/VALUE_SET?id=Abenakian'+and+'b'='b",null , "302"}, 
+			{"/id/CODE_SYSTEM?id=http://id.nlm.nih.gov/cui/C1140091'+and+'b'='b", null, "302"}, 
+			{"version/CODE_SYSTEM/X12.3?version=2.40.5'+and+'b'='b", null, "404"}};
+		
 	
 		@Before
 		public void setup() {
@@ -259,7 +263,7 @@ public class URI_ResolverTest {
 					results.andDo(print());
 				}
 			}
-			
+
 
 //			mockMvc.perform( get(INPUT_URL[1]).accept(MediaType.APPLICATION_JSON))
 //			.andExpect(jsonPath("$.resourceType").value("CODE_SYSTEM"))
@@ -269,6 +273,21 @@ public class URI_ResolverTest {
 		}    
 		
 		
+	@Test
+	public void testSQLInjection() throws Exception{
+		for(int i = 0; i <TEST_SQL_INJ.length; i++ ){
+//			if(TEST_SQL_INJ[i][RETURNED_STATUS].equals("400")){  // Succeeded
+//				mockMvc.perform( get(TEST_SQL_INJ[i][INPUT_URL]).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+//			}
+//			else 
+				if(TEST_SQL_INJ[i][RETURNED_STATUS].equals("302")){  // Redirect
+				mockMvc.perform( get(TEST_SQL_INJ[i][INPUT_URL]).accept(MediaType.APPLICATION_JSON)).andExpect(status().isFound());
+			}
+			else if(TEST_SQL_INJ[i][RETURNED_STATUS].equals("404")){  // Failed
+				mockMvc.perform( get(TEST_SQL_INJ[i][INPUT_URL]).accept(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
+			}
+		}
+	}
 		@Configuration
 		@EnableWebMvc
 		public static class TestResolveURI {
